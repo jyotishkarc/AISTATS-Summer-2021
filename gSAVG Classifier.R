@@ -1,3 +1,5 @@
+#### Author : JYOTISHKA RAY CHOUDHURY
+
 rho <- function(a,b,c){
    if (a != c && b != c) {
       return(acos(sum((a-c)*(b-c)) / sqrt(sum((a-c)^2) * sum((b-c)^2))) / pi)
@@ -7,9 +9,9 @@ rho <- function(a,b,c){
 }
 
 
-n <- 20
-m <- 20
-d <- 50
+n <- 50
+m <- 50
+d <- 400
 
 X <- matrix(rcauchy(n*d), nrow = n, ncol = d, byrow = TRUE)
 Y <- matrix(rnorm(n*d), nrow = m, ncol = d, byrow = TRUE)
@@ -29,7 +31,6 @@ for (i in 1:n) {
 }
 
 A_XY <- sum(A_XY)/((n+m-1)*n*m)
-Sys.time()
 
 ##### A_XX
 A_XX <- matrix(rep(0, n^2), n, n)
@@ -43,7 +44,6 @@ for(i in 1:n){
 }
 
 A_XX <- 2 * sum(A_XX)/((n+m-1)*(n-1)*n)
-Sys.time()
 
 ##### A_YY
 A_YY <- matrix(rep(0, m^2), m, m)
@@ -57,14 +57,13 @@ for(i in 1:m){
 }
 
 A_YY <- 2 * sum(A_YY)/((n+m-1)*(m-1)*m)
-Sys.time()
 
 ##### L
 L_XY <- 2 * A_XY - A_XX - A_YY
 S_XY <- A_XX - A_YY
 
-ns <- 60
-ms <- 60
+ns <- 150
+ms <- 150
 
 Z_F <- matrix(rcauchy(ns*d), nrow = ns, ncol = d, byrow = TRUE)
 Z_G <- matrix(rnorm(ns*d), nrow = ms, ncol = d, byrow = TRUE)
@@ -73,7 +72,6 @@ Z <- rbind(Z_F, Z_G)
 ground.label <- c(rep(1,ns), rep(2,ms))
 prac.label <- classify(Z, X, Y, A_XX, A_YY, A_XY, L_XY, S_XY)
 
-Sys.time()
 print(length(which(ground.label != prac.label)))
 
 
@@ -101,15 +99,13 @@ classify <- function(Z, X, Y, A_XX, A_YY, A_XY, L_XY, S_XY){
       }
    }
    
-   Sys.time()
-   
    A_XZ <- rowMeans(A_XZ)
    A_YZ <- rowMeans(A_YZ)
    
    L_XZ <- A_XZ - rep(A_XX/2, R)
    L_YZ <- A_YZ - rep(A_YY/2, R)
    
-   S_QZ <- A_XZ + A_YZ - rep((A_XY + (A_XX + A_YY)/2), R)
+   S_QZ <- A_XZ + A_YZ - (A_XY + (A_XX + A_YY)/2)
    
    T_Z <- L_XY * (L_YZ - L_XZ)/2 + S_XY * S_QZ/2
    
