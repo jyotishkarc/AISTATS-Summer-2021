@@ -125,4 +125,17 @@ classify <- function(Z, X, Y, A_XX, A_YY, A_XY, L_XY, S_XY){
 }
 
 
-
+#####################################
+# Cauchy                            #
+# t_3                               #
+# Gaussian                          #
+#                                   #
+# d <- 200, 1000                    #
+#                                   #
+# Location parameter = Kim`s paper  #
+# Scale parameter = Kim`s paper     #
+#                                   #
+# Training = 20 20                  #
+# Test = 200 200                    #
+#####################################
+# Replicate = 100 times
