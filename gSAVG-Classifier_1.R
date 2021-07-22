@@ -1,6 +1,11 @@
 #### Author : JYOTISHKA RAY CHOUDHURY
 #### Date : 22.07.2021
 
+library(doParallel)
+no.cores = round(detectCores()*0.75)
+cl = makeCluster(spec = no.cores, type = 'PSOCK')
+registerDoParallel(cl)
+
 rho <- function(a,b,c){
    if (a != c && b != c) {
       return(acos(sum((a-c)*(b-c)) / sqrt(sum((a-c)^2) * sum((b-c)^2))) / pi)
@@ -11,10 +16,12 @@ rho <- function(a,b,c){
 
 error.prop <- c()
 
+clusterExport(cl, ls())
+
 for(u in 1:50){
-   n <- 30
-   m <- 30
-   d <- 100
+   n <- 20
+   m <- 20
+   d <- 1000
    
    X <- matrix(rcauchy(n*d), nrow = n, ncol = d, byrow = TRUE)
    Y <- matrix(rnorm(m*d, 1, 1), nrow = m, ncol = d, byrow = TRUE)
@@ -25,13 +32,29 @@ for(u in 1:50){
    ##### A_XY
    A_XY <- matrix(rep(0, n*m), n, m)
    
-   for (i in 1:n) {
-      for (j in 1:m) {
-         for (k in 1:(n+m)) {
-            A_XY[i,j] <- A_XY[i,j] + rho(X[i,], Y[j,], Q[k,])
-         }
-      }
-   }
+   # for (i in 1:n) {
+   #    for (j in 1:m) {
+   #       for (k in 1:(n+m)) {
+   #          A_XY[i,j] <- A_XY[i,j] + rho(X[i,], Y[j,], Q[k,])
+   #       }
+   #    }
+   # }
+   #fun1 =
+   clusterExport(cl, c('X','Y','Q','i','j'))
+   
+   rho.fun = function(vec){
+      i = vec[1];
+      j = vec[2];
+      
+      sum(sapply(1:(n+m),function(val){
+         rho(X[i,],Y[j,],Q[val,])
+      }))/((n+m-1)*n*m) 
+   } 
+   
+   indx.mat = cbind(rep(1:n, each = m),rep(1:m, times = n))
+   clusterExport(cl, c('n','m'))
+   system.time({A_XY = parApply(cl,indx.mat,1,rho.fun)})
+   
    
    A_XY <- sum(A_XY)/((n+m-1)*n*m)
    
@@ -125,18 +148,6 @@ classify <- function(Z, X, Y, A_XX, A_YY, A_XY, L_XY, S_XY){
 }
 
 
-#####################################
-# Cauchy                            #
-# t_3                               #
-# Gaussian                          #
-#                                   #
-# d <- 200, 1000                    #
-#                                   #
-# Location parameter = Kim`s paper  #
-# Scale parameter = Kim`s paper     #
-#                                   #
-# Training = 20 20                  #
-# Test = 200 200                    #
-# Replicate = 100 times             #
-#####################################
 
+stopCluster(cl)
+gc()
