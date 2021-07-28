@@ -12,9 +12,9 @@ rho <- function(a,b,c){
 error.prop <- c()
 
 for(u in 1:50){
-   n <- 30
-   m <- 30
-   d <- 100
+   n <- 20
+   m <- 20
+   d <- 200
    
    X <- matrix(rcauchy(n*d), nrow = n, ncol = d, byrow = TRUE)
    Y <- matrix(rnorm(m*d, 1, 1), nrow = m, ncol = d, byrow = TRUE)
@@ -65,8 +65,8 @@ for(u in 1:50){
    L_XY <- 2 * A_XY - A_XX - A_YY
    S_XY <- A_XX - A_YY
    
-   ns <- 90
-   ms <- 90
+   ns <- 200
+   ms <- 200
    
    Z_F <- matrix(rcauchy(ns*d), nrow = ns, ncol = d, byrow = TRUE)
    Z_G <- matrix(rnorm(ms*d, 1, 1), nrow = ms, ncol = d, byrow = TRUE)

@@ -32,14 +32,15 @@ for(u in 1:50){
    ##### A_XY
    A_XY <- matrix(rep(0, n*m), n, m)
    
-   # for (i in 1:n) {
-   #    for (j in 1:m) {
-   #       for (k in 1:(n+m)) {
-   #          A_XY[i,j] <- A_XY[i,j] + rho(X[i,], Y[j,], Q[k,])
-   #       }
-   #    }
-   # }
-   #fun1 =
+   for (i in 1:n) {
+      for (j in 1:m) {
+         for (k in 1:(n+m)) {
+            A_XY[i,j] <- A_XY[i,j] + rho(X[i,], Y[j,], Q[k,])
+         }
+      }
+   }
+
+   
    clusterExport(cl, c('X','Y','Q','i','j'))
    
    rho.fun = function(vec){
@@ -49,7 +50,7 @@ for(u in 1:50){
       sum(sapply(1:(n+m),function(val){
          rho(X[i,],Y[j,],Q[val,])
       }))/((n+m-1)*n*m) 
-   } 
+   }
    
    indx.mat = cbind(rep(1:n, each = m),rep(1:m, times = n))
    clusterExport(cl, c('n','m'))
