@@ -20,7 +20,7 @@ error.prop <- c()
 
 
 
-classify <- function(Z, X, Y, A_XX, A_YY, A_XY, L_XY, S_XY){
+classify.parallel <- function(Z, X, Y, A_XX, A_YY, A_XY, L_XY, S_XY){
    print("Classification starting")
    R1 <- nrow(Z)
    Q <- rbind(X,Y)
@@ -46,7 +46,7 @@ classify <- function(Z, X, Y, A_XX, A_YY, A_XY, L_XY, S_XY){
    }
    
    indx.mat = cbind(rep(1:R1, each = n),rep(1:n, times = R1))
-   clusterExport(cl, c('R1','n','m','rho'))
+   clusterExport(cl, c('R1','n','m'), envir = environment())
    A_XZ = rowMeans(matrix(parApply(cl,indx.mat,1,A_XZ.rho.fun), R1, n, 
                           byrow = TRUE)) / (n+m-1)
    
@@ -90,10 +90,10 @@ clusterExport(cl, ls())
 
 t1 <- proc.time()
 
-for(u in 1:10){
-   n <- 20
-   m <- 20
-   d <- 200
+for(u in 1:100){
+   n <- 30
+   m <- 30
+   d <- 500
    
    X <- matrix(rcauchy(n*d), nrow = n, ncol = d, byrow = TRUE)
    Y <- matrix(rcauchy(m*d, 1, 1), nrow = m, ncol = d, byrow = TRUE)
@@ -163,8 +163,8 @@ for(u in 1:10){
    
    
    ########## Test Observations
-   ns <- 200
-   ms <- 200
+   ns <- 150
+   ms <- 150
    
    Z_F <- matrix(rcauchy(ns*d), nrow = ns, ncol = d, byrow = TRUE)
    Z_G <- matrix(rcauchy(ms*d, 1, 1), nrow = ms, ncol = d, byrow = TRUE)
@@ -174,16 +174,16 @@ for(u in 1:10){
    
    clusterExport(cl, c('Z'))
    
-   result <- classify(Z, X, Y, A_XX, A_YY, A_XY, L_XY, S_XY)
+   result <- classify.parallel(Z, X, Y, A_XX, A_YY, A_XY, L_XY, S_XY)
    prac.label <- result[[1]]
    T_Z <- result[[2]]
-   print(T_Z)
+   # print(T_Z)
    
    # print(length(which(ground.label != prac.label)))
    error.prop[u] <- length(which(ground.label != prac.label)) / (ns + ms)
    print(error.prop[u])
    
-   print(proc.time() - u*t1)
+   print((proc.time() - t1)/u) #avgtime required per iteration
 }
 
 
