@@ -9,11 +9,9 @@ cl = makeCluster(spec = no.cores, type = 'PSOCK')
 registerDoParallel(cl)
 
 rho <- function(a,b,c){
-   if (a != c && b != c) {
-      return(acos(sum((a-c)*(b-c)) / sqrt(sum((a-c)^2) * sum((b-c)^2))) / pi)
-   }
+   if (prod(a == c)== 1 || prod(b == c) == 1) return(0)
    
-   return(0)
+   else return(acos(sum((a-c)*(b-c)) / sqrt(sum((a-c)^2) * sum((b-c)^2))) / pi)
 }
 
 error.prop <- c()
@@ -77,6 +75,7 @@ classify.parallel <- function(Z, X, Y, A_XX, A_YY, A_XY, L_XY, S_XY){
    S_QZ <- A_XZ + A_YZ - rep((A_XY + (A_XX + A_YY)/2), R1)
    
    T_Z <- L_XY * (L_YZ - L_XZ)/2 + S_XY * S_QZ/2
+   # print(T_Z)
    
    prac.label <- rep(0, R1)
    prac.label[which(T_Z > 0)] <- 1
@@ -90,13 +89,13 @@ clusterExport(cl, ls())
 
 t1 <- proc.time()
 
-for(u in 1:100){
+for(u in 1:25){
    n <- 20
    m <- 20
-   d <- 200
+   d <- 250
    
    X <- matrix(rcauchy(n*d), nrow = n, ncol = d, byrow = TRUE)
-   Y <- matrix(rcauchy(m*d, 0, 3), nrow = m, ncol = d, byrow = TRUE)
+   Y <- matrix(rcauchy(m*d, 1, 1), nrow = m, ncol = d, byrow = TRUE)
    Q <- rbind(X,Y)
    
    print("OK")
@@ -136,7 +135,7 @@ for(u in 1:100){
    }
    
    indx.mat = cbind(rep(1:n, each = n),rep(1:n, times = n))
-   A_XX = sum(parApply(cl,indx.mat,1,A_XX.rho.fun))/((n+m-1)*n*(n-1))
+   A_XX = sum(parApply(cl,indx.mat,1,A_XX.rho.fun))/((n+m-2)*n*(n-1))
    
    
    ##### A_YY
@@ -154,7 +153,7 @@ for(u in 1:100){
    }
    
    indx.mat = cbind(rep(1:m, each = m),rep(1:m, times = m))
-   A_YY = sum(parApply(cl,indx.mat,1,A_YY.rho.fun))/((n+m-1)*m*(m-1))
+   A_YY = sum(parApply(cl,indx.mat,1,A_YY.rho.fun))/((n+m-2)*m*(m-1))
    
    
    ##### L
@@ -163,11 +162,11 @@ for(u in 1:100){
    
    
    ########## Test Observations
-   ns <- 160
-   ms <- 160
+   ns <- 100
+   ms <- 100
    
    Z_F <- matrix(rcauchy(ns*d), nrow = ns, ncol = d, byrow = TRUE)
-   Z_G <- matrix(rcauchy(ms*d, 0, 3), nrow = ms, ncol = d, byrow = TRUE)
+   Z_G <- matrix(rcauchy(ms*d, 1, 1), nrow = ms, ncol = d, byrow = TRUE)
    Z <- rbind(Z_F, Z_G)
    
    ground.label <- c(rep(1,ns), rep(2,ms))
