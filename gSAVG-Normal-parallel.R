@@ -95,7 +95,7 @@ for(u in 1:25){
    d <- 250
    
    X <- matrix(rnorm(n*d), nrow = n, ncol = d, byrow = TRUE)
-   Y <- matrix(rnorm(m*d, 1, 1), nrow = m, ncol = d, byrow = TRUE)
+   Y <- matrix(rnorm(m*d, 0, 2), nrow = m, ncol = d, byrow = TRUE)
    Q <- rbind(X,Y)
    
    print("OK")
@@ -166,7 +166,7 @@ for(u in 1:25){
    ms <- 100
    
    Z_F <- matrix(rnorm(ns*d), nrow = ns, ncol = d, byrow = TRUE)
-   Z_G <- matrix(rnorm(ms*d, 1, 1), nrow = ms, ncol = d, byrow = TRUE)
+   Z_G <- matrix(rnorm(ms*d, 0, 2), nrow = ms, ncol = d, byrow = TRUE)
    Z <- rbind(Z_F, Z_G)
    
    ground.label <- c(rep(1,ns), rep(2,ms))

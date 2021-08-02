@@ -19,7 +19,7 @@ error.prop <- c()
 
 
 classify.parallel <- function(Z, X, Y, A_XX, A_YY, A_XY, L_XY, S_XY){
-   print("Classification starting")
+   # print("Classification starting")
    R1 <- nrow(Z)
    Q <- rbind(X,Y)
    n <- nrow(X)
@@ -87,18 +87,18 @@ classify.parallel <- function(Z, X, Y, A_XX, A_YY, A_XY, L_XY, S_XY){
 
 clusterExport(cl, ls())
 
-t1 <- proc.time()
+# t1 <- proc.time()
 
-for(u in 1:25){
+for(u in 1:100){
    n <- 20
    m <- 20
-   d <- 250
+   d <- 200
    
    X <- matrix(rcauchy(n*d), nrow = n, ncol = d, byrow = TRUE)
-   Y <- matrix(rcauchy(m*d, 1, 1), nrow = m, ncol = d, byrow = TRUE)
+   Y <- matrix(rcauchy(m*d, 0, 5), nrow = m, ncol = d, byrow = TRUE)
    Q <- rbind(X,Y)
    
-   print("OK")
+   print(u)
    
    ##### A_XY
    A_XY <- matrix(rep(0, n*m), n, m)
@@ -162,11 +162,11 @@ for(u in 1:25){
    
    
    ########## Test Observations
-   ns <- 100
-   ms <- 100
+   ns <- 160
+   ms <- 160
    
    Z_F <- matrix(rcauchy(ns*d), nrow = ns, ncol = d, byrow = TRUE)
-   Z_G <- matrix(rcauchy(ms*d, 1, 1), nrow = ms, ncol = d, byrow = TRUE)
+   Z_G <- matrix(rcauchy(ms*d, 0, 5), nrow = ms, ncol = d, byrow = TRUE)
    Z <- rbind(Z_F, Z_G)
    
    ground.label <- c(rep(1,ns), rep(2,ms))
@@ -182,7 +182,7 @@ for(u in 1:25){
    error.prop[u] <- length(which(ground.label != prac.label)) / (ns + ms)
    print(error.prop[u])
    
-   print((proc.time() - t1)/u) #avgtime required per iteration
+   # print((proc.time() - t1)/u) #avgtime required per iteration
 }
 
 

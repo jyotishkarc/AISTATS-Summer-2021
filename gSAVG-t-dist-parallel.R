@@ -19,7 +19,7 @@ error.prop <- c()
 
 
 classify.parallel <- function(Z, X, Y, A_XX, A_YY, A_XY, L_XY, S_XY){
-   print("Classification starting")
+   # print("Classification starting")
    R1 <- nrow(Z)
    Q <- rbind(X,Y)
    n <- nrow(X)
@@ -90,16 +90,16 @@ clusterExport(cl, ls())
 library(metRology)
 t1 <- proc.time()
 
-for(u in 1:10){
+for(u in 1:50){
    n <- 20
    m <- 20
-   d <- 250
+   d <- 10
    
-   X <- matrix(rt(n*d, 3), nrow = n, ncol = d, byrow = TRUE)
-   Y <- matrix(rt.scaled(m*d, 3, 1, 1), nrow = m, ncol = d, byrow = TRUE)
+   X <- matrix(rt(n*d, 2), nrow = n, ncol = d, byrow = TRUE)
+   Y <- matrix(rt.scaled(m*d, 2, 3, 1), nrow = m, ncol = d, byrow = TRUE)
    Q <- rbind(X,Y)
    
-   print("OK")
+   print(u)
    
    ##### A_XY
    A_XY <- matrix(rep(0, n*m), n, m)
@@ -163,11 +163,11 @@ for(u in 1:10){
    
    
    ########## Test Observations
-   ns <- 100
-   ms <- 100
+   ns <- 160
+   ms <- 160
    
-   Z_F <- matrix(rt(ns*d, 3), nrow = ns, ncol = d, byrow = TRUE)
-   Z_G <- matrix(rt.scaled(ms*d, 3, 1, 1), nrow = ms, ncol = d, byrow = TRUE)
+   Z_F <- matrix(rt(ns*d, 2), nrow = ns, ncol = d, byrow = TRUE)
+   Z_G <- matrix(rt.scaled(ms*d, 2, 3, 1), nrow = ms, ncol = d, byrow = TRUE)
    Z <- rbind(Z_F, Z_G)
    
    ground.label <- c(rep(1,ns), rep(2,ms))
