@@ -89,13 +89,20 @@ clusterExport(cl, ls())
 
 # t1 <- proc.time()
 
-for(u in 1:50){
+for(u in 1:100){
    n <- 20
    m <- 20
+   ns <- 100
+   ms <- 100
    d <- 200
    
-   X <- matrix(rcauchy(n*d), nrow = n, ncol = d, byrow = TRUE)
-   Y <- matrix(rcauchy(m*d, 0, 5), nrow = m, ncol = d, byrow = TRUE)
+   X <- matrix(rcauchy(n*d), nrow = n+ns, ncol = d, byrow = TRUE)
+   Y <- matrix(rcauchy(m*d, 0, 5), nrow = m+ms, ncol = d, byrow = TRUE)
+   
+   Z <- rbind(X[(n+1):(n+ns),], Y[(m+1):(m+ms),])     ## Test Observations
+   
+   X <- X[1:n,]
+   Y <- Y[1:m,]
    Q <- rbind(X,Y)
    
    print(u)
@@ -162,12 +169,7 @@ for(u in 1:50){
    
    
    ########## Test Observations
-   ns <- 100
-   ms <- 100
    
-   Z_F <- matrix(rcauchy(ns*d), nrow = ns, ncol = d, byrow = TRUE)
-   Z_G <- matrix(rcauchy(ms*d, 0, 5), nrow = ms, ncol = d, byrow = TRUE)
-   Z <- rbind(Z_F, Z_G)
    
    ground.label <- c(rep(1,ns), rep(2,ms))
    

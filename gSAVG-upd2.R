@@ -18,16 +18,16 @@ error.prop <- c()
 
 
 
-classify.parallel <- function(Z, X, Y, A_XX, A_YY, A_XY, L_XY, S_XY){
+classify.parallel <- function(Z, X, Y, T_FF, T_GG, T_FG, W, S_FG){
    # print("Classification starting")
    R1 <- nrow(Z)
    Q <- rbind(X,Y)
    n <- nrow(X)
    m <- nrow(Y)
-   A_XZ <- matrix(rep(0, n*R1), R1, n)
-   A_YZ <- matrix(rep(0, m*R1), R1, m)
+   T_FZ <- matrix(rep(0, n*R1), R1, n)
+   T_GZ <- matrix(rep(0, m*R1), R1, m)
    
-   A_XZ.rho.fun <- function(vec){
+   T_FZ.rho.fun <- function(vec){
       i = vec[1];
       j = vec[2];
       
@@ -45,13 +45,13 @@ classify.parallel <- function(Z, X, Y, A_XX, A_YY, A_XY, L_XY, S_XY){
    
    indx.mat = cbind(rep(1:R1, each = n),rep(1:n, times = R1))
    clusterExport(cl, c('R1','n','m'), envir = environment())
-   A_XZ = rowMeans(matrix(parApply(cl,indx.mat,1,A_XZ.rho.fun), R1, n, 
+   T_FZ = rowMeans(matrix(parApply(cl,indx.mat,1,T_FZ.rho.fun), R1, n, 
                           byrow = TRUE)) / (n+m-1)
    
    
    # clusterExport(cl, c('Y','Q','i','j'))
    
-   A_YZ.rho.fun <- function(vec){
+   T_GZ.rho.fun <- function(vec){
       i = vec[1];
       j = vec[2];
       
@@ -65,47 +65,75 @@ classify.parallel <- function(Z, X, Y, A_XX, A_YY, A_XY, L_XY, S_XY){
    
    indx.mat = cbind(rep(1:R1, each = m),rep(1:m, times = R1))
    # clusterExport(cl, c('R','m'))
-   A_YZ = rowMeans(matrix(parApply(cl,indx.mat,1,A_YZ.rho.fun), R1, m, 
+   T_GZ = rowMeans(matrix(parApply(cl,indx.mat,1,T_GZ.rho.fun), R1, m, 
                           byrow = TRUE)) / (n+m-1)
    
    
-   L_XZ <- A_XZ - rep(A_XX, R1)/2
-   L_YZ <- A_YZ - rep(A_YY, R1)/2
+   L_FZ <- T_FZ - rep(T_FF, R1)/2
+   L_GZ <- T_GZ - rep(T_GG, R1)/2
    
-   S_QZ <- A_XZ + A_YZ - rep((A_XY + (A_XX + A_YY)/2), R1)
+   S_Z <- L_FZ + L_GZ - T_FG
    
-   T_Z <- L_XY * (L_YZ - L_XZ)/2 + S_XY * S_QZ/2
-   # print(T_Z)
+   W0_FG <- W[[1]]
+   # W1_FG <- W[[2]]
+   # W2_FG <- W[[3]]
    
-   prac.label <- rep(0, R1)
-   prac.label[which(T_Z > 0)] <- 1
-   prac.label[which(T_Z <= 0)] <- 2
+   prac.label.0 <- prac.label.1 <- prac.label.2 <- rep(0, R1)
    
-   return(list(prac.label, T_Z))
+   #### CLASSIFIER 0
+   delta0_Z <- L_GZ - L_FZ
+   
+   prac.label.0[which(delta0_Z > 0)] <- 1
+   prac.label.0[which(delta0_Z <= 0)] <- 2
+   
+   #### CLASSIFIER 1
+   delta1_Z <- W0_FG * sign(delta0_Z) / 2 + S_FG * sign(S_Z) / 2
+   
+   prac.label.1[which(delta1_Z > 0)] <- 1
+   prac.label.1[which(delta1_Z <= 0)] <- 2
+   
+   #### CLASSIFIER 1
+   delta2_Z <- W0_FG * delta0_Z + S_FG * S_Z
+   
+   prac.label.2[which(delta2_Z > 0)] <- 1
+   prac.label.2[which(delta2_Z <= 0)] <- 2
+   
+   prac.label <- list(prac.label.0, prac.label.1, prac.label.2)
+   
+   return(prac.label)
 }
 
 
 clusterExport(cl, ls())
 
 # t1 <- proc.time()
+error.prop.0 <- error.prop.1 <- error.prop.2 <- c()
 
 for(u in 1:50){
    n <- 20
    m <- 20
+   ns <- 100
+   ms <- 100
+   
    d <- 200
    
-   X <- matrix(rcauchy(n*d), nrow = n, ncol = d, byrow = TRUE)
-   Y <- matrix(rcauchy(m*d, 0, 5), nrow = m, ncol = d, byrow = TRUE)
+   X <- matrix(rcauchy(n*d), nrow = n+ns, ncol = d, byrow = TRUE)
+   Y <- matrix(rcauchy(m*d, 0, 2), nrow = m+ms, ncol = d, byrow = TRUE)
+   
+   Z <- rbind(X[(n+1):(n+ns),], Y[(m+1):(m+ms),])     ## Test Observations
+   
+   X <- X[1:n,]
+   Y <- Y[1:m,]
    Q <- rbind(X,Y)
    
-   print(u)
+   if (u %% 5 == 0) {print(u)}
    
    ##### A_XY
-   A_XY <- matrix(rep(0, n*m), n, m)
+   T_FG <- matrix(rep(0, n*m), n, m)
    
    # clusterExport(cl, c('X','Y','Q','i','j'))
    
-   A_XY.rho.fun <- function(vec){
+   T_FG.rho.fun <- function(vec){
       i = vec[1];
       j = vec[2];
       
@@ -116,16 +144,16 @@ for(u in 1:50){
    
    indx.mat = cbind(rep(1:n, each = m),rep(1:m, times = n))
    clusterExport(cl, c('X','Y','Q','n','m'))
-   a <- matrix(parApply(cl,indx.mat,1,A_XY.rho.fun), n, m, byrow = TRUE)/((n+m-2)*n*m)
-   A_XY = sum(a)
+   a <- matrix(parApply(cl,indx.mat,1,T_FG.rho.fun), n, m, byrow = TRUE)/((n+m-2)*n*m)
+   T_FG = sum(a)
    
    
    ##### A_XX
-   A_XX <- matrix(rep(0, n^2), n, n)
+   T_FF <- matrix(rep(0, n^2), n, n)
    
    # clusterExport(cl, c('X','Q','i','j'))
    
-   A_XX.rho.fun <- function(vec){
+   T_FF.rho.fun <- function(vec){
       i = vec[1];
       j = vec[2];
       
@@ -135,15 +163,15 @@ for(u in 1:50){
    }
    
    indx.mat = cbind(rep(1:n, each = n),rep(1:n, times = n))
-   A_XX = sum(parApply(cl,indx.mat,1,A_XX.rho.fun))/((n+m-2)*n*(n-1))
+   T_FF = sum(parApply(cl,indx.mat,1,T_FF.rho.fun))/((n+m-2)*n*(n-1))
    
    
    ##### A_YY
-   A_YY <- matrix(rep(0, m^2), m, m)
+   T_GG <- matrix(rep(0, m^2), m, m)
    
    # clusterExport(cl, c('Y','Q','i','j'))
    
-   A_YY.rho.fun <- function(vec){
+   T_GG.rho.fun <- function(vec){
       i = vec[1];
       j = vec[2];
       
@@ -153,39 +181,34 @@ for(u in 1:50){
    }
    
    indx.mat = cbind(rep(1:m, each = m),rep(1:m, times = m))
-   A_YY = sum(parApply(cl,indx.mat,1,A_YY.rho.fun))/((n+m-2)*m*(m-1))
+   T_GG = sum(parApply(cl,indx.mat,1,T_GG.rho.fun))/((n+m-2)*m*(m-1))
    
    
    ##### L
-   L_XY <- 2 * A_XY - A_XX - A_YY
-   S_XY <- A_XX - A_YY
+   W0_FG <- 2 * T_FG - T_FF - T_GG
+   W1_FG <- W0_FG / 2 + abs(T_FF - T_GG) / 2
+   W2_FG <- W0_FG^2 / 2 + (T_FF - T_GG)^2 / 2
    
+   W <- list(W0_FG, W1_FG, W2_FG)
+   S_FG <- T_FF - T_GG
    
    ########## Test Observations
-   ns <- 100
-   ms <- 100
    
-   Z_F <- matrix(rcauchy(ns*d), nrow = ns, ncol = d, byrow = TRUE)
-   Z_G <- matrix(rcauchy(ms*d, 0, 5), nrow = ms, ncol = d, byrow = TRUE)
-   Z <- rbind(Z_F, Z_G)
    
    ground.label <- c(rep(1,ns), rep(2,ms))
    
    clusterExport(cl, c('Z'))
    
-   result <- classify.parallel(Z, X, Y, A_XX, A_YY, A_XY, L_XY, S_XY)
-   prac.label <- result[[1]]
-   T_Z <- result[[2]]
-   # print(T_Z)
+   prac.label <- classify.parallel(Z, X, Y, T_FF, T_GG, T_FG, W, S_FG)
    
-   # print(length(which(ground.label != prac.label)))
-   error.prop[u] <- length(which(ground.label != prac.label)) / (ns + ms)
-   print(error.prop[u])
+   error.prop.0[u] <- length(which(ground.label != prac.label[[1]])) / (ns + ms)
+   error.prop.1[u] <- length(which(ground.label != prac.label[[2]])) / (ns + ms)
+   error.prop.2[u] <- length(which(ground.label != prac.label[[3]])) / (ns + ms)
    
    # print((proc.time() - t1)/u) #avgtime required per iteration
 }
 
-
+error.prop <- list(mean(error.prop.0), mean(error.prop.1), mean(error.prop.2))
 
 stopCluster(cl)
 gc()
