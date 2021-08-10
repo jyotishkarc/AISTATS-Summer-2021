@@ -1,7 +1,7 @@
 #### Author : JYOTISHKA RAY CHOUDHURY
 #### Date : 22.07.2021
 
-# rm(list = ls())
+start.time <- proc.time()
 
 library(doParallel)
 no.cores = round(detectCores()*0.75)
@@ -117,8 +117,8 @@ for(u in 1:50){
    
    d <- 200
    
-   X <- matrix(rcauchy(n*d), nrow = n+ns, ncol = d, byrow = TRUE)
-   Y <- matrix(rcauchy(m*d, 0, 2), nrow = m+ms, ncol = d, byrow = TRUE)
+   X <- matrix(rnorm(n*d), nrow = n+ns, ncol = d, byrow = TRUE)
+   Y <- matrix(rnorm(m*d, 0, 2), nrow = m+ms, ncol = d, byrow = TRUE)
    
    Z <- rbind(X[(n+1):(n+ns),], Y[(m+1):(m+ms),])     ## Test Observations
    
@@ -126,7 +126,7 @@ for(u in 1:50){
    Y <- Y[1:m,]
    Q <- rbind(X,Y)
    
-   if (u %% 5 == 0) {print(u)}
+   if (u %% 10 == 0) {print(u)}
    
    ##### A_XY
    T_FG <- matrix(rep(0, n*m), n, m)
@@ -144,7 +144,7 @@ for(u in 1:50){
    
    indx.mat = cbind(rep(1:n, each = m),rep(1:m, times = n))
    clusterExport(cl, c('X','Y','Q','n','m'))
-   a <- matrix(parApply(cl,indx.mat,1,T_FG.rho.fun), n, m, byrow = TRUE)/((n+m-2)*n*m)
+   a <- matrix(parApply(cl,indx.mat,1,T_FG.rho.fun), n, m, byrow = T)/((n+m-2)*n*m)
    T_FG = sum(a)
    
    
@@ -208,7 +208,14 @@ for(u in 1:50){
    # print((proc.time() - t1)/u) #avgtime required per iteration
 }
 
-error.prop <- list(mean(error.prop.0), mean(error.prop.1), mean(error.prop.2))
+error.prop.mean <- list(mean(error.prop.0), mean(error.prop.1), mean(error.prop.2))
+error.prop.sd <- list(sd(error.prop.0), sd(error.prop.1), sd(error.prop.2))
+
+exec.time <- proc.time() - start.time
+
+print("Normal")
+print(exec.time)
+return(error.prop)
 
 stopCluster(cl)
 gc()
