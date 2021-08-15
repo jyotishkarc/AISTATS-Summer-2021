@@ -16,8 +16,6 @@ rho <- function(a,b,c){
 
 error.prop <- c()
 
-
-
 classify.parallel <- function(Z, X, Y, T_FF, T_GG, T_FG, W, S_FG){
    # print("Classification starting")
    R1 <- nrow(Z)
