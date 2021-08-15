@@ -117,8 +117,8 @@ for(u in 1:50){
    
    d <- 200
    
-   X <- matrix(rnorm((n+ns)*d, 2, 1), nrow = n+ns, ncol = d, byrow = TRUE)
-   Y <- matrix(rnorm((m+ms)*d, 3, 1), nrow = m+ms, ncol = d, byrow = TRUE)
+   X <- matrix(rnorm((n+ns)*d, 0, 1.3), nrow = n+ns, ncol = d, byrow = TRUE)
+   Y <- matrix(rnorm((m+ms)*d, 0, 1.6), nrow = m+ms, ncol = d, byrow = TRUE)
    
    Z <- rbind(X[(n+1):(n+ns),], Y[(m+1):(m+ms),])     ## Test Observations
    
@@ -126,7 +126,7 @@ for(u in 1:50){
    Y <- Y[1:m,]
    Q <- rbind(X,Y)
    
-   if (u %% 10 == 0) {print(u)}
+   if (u %% 6 == 0) {print(u)}
    
    ##### A_XY
    T_FG <- matrix(rep(0, n*m), n, m)
@@ -215,6 +215,7 @@ exec.time <- proc.time() - start.time
 
 print("Normal")
 print(exec.time)
+print(error.prop.mean)
 
 stopCluster(cl)
 gc()
