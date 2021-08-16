@@ -117,8 +117,8 @@ for(u in 1:50){
    
    d <- 200
    
-   X <- matrix(rcauchy((n+ns)*d, 0, 3), nrow = n+ns, ncol = d, byrow = TRUE)
-   Y <- matrix(rcauchy((m+ms)*d, 0, 4), nrow = m+ms, ncol = d, byrow = TRUE)
+   X <- matrix(rcauchy((n+ns)*d, 2, 1), nrow = n+ns, ncol = d, byrow = TRUE)
+   Y <- matrix(rcauchy((m+ms)*d, 3, 1), nrow = m+ms, ncol = d, byrow = TRUE)
    
    Z <- rbind(X[(n+1):(n+ns),], Y[(m+1):(m+ms),])     ## Test Observations
    

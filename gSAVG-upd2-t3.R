@@ -115,8 +115,8 @@ for(u in 1:50){
    
    d <- 200
    
-   X <- matrix(rt((n+ns)*d, 3), nrow = n+ns, ncol = d, byrow = TRUE) * 3
-   Y <- matrix(rt((m+ms)*d, 3), nrow = m+ms, ncol = d, byrow = TRUE) * 4
+   X <- matrix(rt((n+ns)*d, 3), nrow = n+ns, ncol = d, byrow = TRUE) + 0.1
+   Y <- matrix(rt((m+ms)*d, 3), nrow = m+ms, ncol = d, byrow = TRUE) + 0.3
    
    Z <- rbind(X[(n+1):(n+ns),], Y[(m+1):(m+ms),])     ## Test Observations
    
