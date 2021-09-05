@@ -1,6 +1,4 @@
-
-
-# rm(list = ls())
+rm(list = ls())
 start.time <- proc.time()
 
 library(doParallel)
