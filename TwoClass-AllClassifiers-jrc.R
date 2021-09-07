@@ -43,19 +43,18 @@ rho.cos.comp <- function(a, b, c1) {
    # if (prod(a == c1) == 1 || prod(b == c1) == 1)
    #    return(0)
    
-   if (sum(a == c1) > 0 || sum(b == c1) > 0)
-      return(0)
-   
-   else{
-      # tmp = sapply(1:length(a), function(val) {
-      #    acos(((a[val] - c1[val]) * (b[val] - c1[val])) /
-      #            abs((a[val] - c1[val]) * (b[val] - c1[val])))
-      # })
-      # 
-      # return(mean(tmp) / pi)
+   # if (sum(a == c1) > 0 || sum(b == c1) > 0)
+   #    return(0)
+   # 
+   # else{
+   #    tmp = sapply(1:length(a), function(val) {
+   #       acos(((a[val] - c1[val]) * (b[val] - c1[val])) /
+   #               abs((a[val] - c1[val]) * (b[val] - c1[val])))
+   #    })
+   # 
+   #    return(mean(tmp) / pi)
       
-      return(length(which(sign((a - c1) * (b - c1)) == -1)) / length(a))
-   }
+   return(length(which(sign((a - c1) * (b - c1)) == -1)) / length(a))
 }
 
 
@@ -343,16 +342,16 @@ for (u in 1:25) {
    
    #### CLASSIFIER 2
    delta2_Z.sin <-
-      (W0_FG.sin * delta0_Z.sin * 0.5) + (S_FG.sin * S_Z.sin) * 0.5
+      (W0_FG.sin * delta0_Z.sin * 0.5) + (S_FG.sin * S_Z.sin)
    
    delta2_Z.sin.comp <-
-      (W0_FG.sin.comp * delta0_Z.sin.comp * 0.5) + (S_FG.sin.comp * S_Z.sin.comp) * 0.5
+      (W0_FG.sin.comp * delta0_Z.sin.comp * 0.5) + (S_FG.sin.comp * S_Z.sin.comp)
    
    delta2_Z.cos <-
-      (W0_FG.cos * delta0_Z.cos * 0.5) + (S_FG.cos * S_Z.cos) * 0.5
+      (W0_FG.cos * delta0_Z.cos * 0.5) + (S_FG.cos * S_Z.cos)
    
    delta2_Z.cos.comp <-
-      (W0_FG.cos.comp * delta0_Z.cos.comp * 0.5) + (S_FG.cos.comp * S_Z.cos.comp) * 0.5
+      (W0_FG.cos.comp * delta0_Z.cos.comp * 0.5) + (S_FG.cos.comp * S_Z.cos.comp)
    
    
    el.2.sin[which(delta2_Z.sin > 0)] <- 1
