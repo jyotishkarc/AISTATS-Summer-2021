@@ -1,14 +1,13 @@
-#### Author : JYOTISHKA RAY CHOUDHURY
 
 # rm(list = ls())
 start.time <- proc.time()
 
-# library(doParallel)
+library(doParallel)
 no.cores = round(detectCores() * 0.75)
 cl = makeCluster(spec = no.cores, type = 'PSOCK')
 registerDoParallel(cl)
 
-d <- 5
+d <- 100
 
 iterations <- 100
 
@@ -26,8 +25,14 @@ rho.sin.comp <- function(a, b) {
    o2 = a * a
    o3 = b * b
    tmp = sapply(1:length(a), function(val) {
-      asin((1 + o1[val]) / sqrt((1 + o2[val]) * (1 + o3[val])))
+      out <- (1 + o1[val]) / sqrt((1 + o2[val]) * (1 + o3[val]))
+      
+      if (abs(out) > 1) {
+         return(asin(round(out)))
+      }
+      else return(asin(out))
    })
+   
    return(mean(tmp))
 }
 
@@ -60,21 +65,21 @@ for (u in 1 : iterations) {
    ns <- 100
    ms <- 100
    
-   X <- matrix(rnorm((n + ns) * d, 0, sqrt(1)),
+   X <- matrix(rnorm((n + ns) * d, 0, sqrt(3)),
              nrow = n + ns,
              ncol = d,
              byrow = TRUE)
    
-   Y <- matrix(rnorm((m + ms) * d, 1, sqrt(1)),
-               nrow = m + ms,
-               ncol = d,
-               byrow = TRUE)
+   # Y <- matrix(rcauchy((m + ms) * d, 0, 2),
+   #             nrow = m + ms,
+   #             ncol = d,
+   #             byrow = TRUE)
    
    
-   # Y <- matrix(rt((m + ms) * d, df = 3),
-   #          nrow = m + ms,
-   #          ncol = d,
-   #          byrow = TRUE)
+   Y <- matrix(rt((m + ms) * d, df = 3),
+            nrow = m + ms,
+            ncol = d,
+            byrow = TRUE)
    
    Z <- rbind(X[(n + 1):(n + ns),], Y[(m + 1):(m + ms),])     ## Test Observations
    
@@ -203,7 +208,6 @@ for (u in 1 : iterations) {
    S_FG.cos.comp <- T_FF.cos.comp - T_GG.cos.comp
    
    ########## Test Observations
-   
    
    ground.label <- c(rep(1, ns), rep(2, ms))
    
@@ -401,10 +405,10 @@ e2.mean <- c(mean(e2.sin),
              mean(e2.cos),
              mean(e2.cos.comp))
 
-
 e0.sd <- c(sd(e0.sin), sd(e0.sin.comp), sd(e0.cos), sd(e0.cos.comp))
 e1.sd <- c(sd(e1.sin), sd(e1.sin.comp), sd(e1.cos), sd(e1.cos.comp))
 e2.sd <- c(sd(e2.sin), sd(e2.sin.comp), sd(e2.cos), sd(e2.cos.comp))
+
 
 all.error.means <- list("Mean of Error Proportions for CLASSIFIER #0" = e0.mean,
                         "Mean of Error Proportions for CLASSIFIER #1" = e1.mean,
@@ -416,7 +420,7 @@ all.error.sd <- list("SD of Error Proportions for CLASSIFIER #0" = e0.sd,
 
 
 print(all.error.means)
-
+print(all.error.sd)
 
 exec.time <- proc.time() - start.time
 print(exec.time)
