@@ -406,9 +406,14 @@ e0.sd <- c(sd(e0.sin), sd(e0.sin.comp), sd(e0.cos), sd(e0.cos.comp))
 e1.sd <- c(sd(e1.sin), sd(e1.sin.comp), sd(e1.cos), sd(e1.cos.comp))
 e2.sd <- c(sd(e2.sin), sd(e2.sin.comp), sd(e2.cos), sd(e2.cos.comp))
 
-all.error.means <- list("Error Proportions for CLASSIFIER #0" = e0.mean,
-                        "Error Proportions for CLASSIFIER #1" = e1.mean,
-                        "Error Proportions for CLASSIFIER #2" = e2.mean)
+all.error.means <- list("Mean of Error Proportions for CLASSIFIER #0" = e0.mean,
+                        "Mean of Error Proportions for CLASSIFIER #1" = e1.mean,
+                        "Mean of Error Proportions for CLASSIFIER #2" = e2.mean)
+
+all.error.sd <- list("SD of Error Proportions for CLASSIFIER #0" = e0.sd,
+                     "SD of Error Proportions for CLASSIFIER #1" = e1.sd,
+                     "SD of Error Proportions for CLASSIFIER #2" = e2.sd)
+
 
 print(all.error.means)
 
