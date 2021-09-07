@@ -3,10 +3,14 @@
 # rm(list = ls())
 start.time <- proc.time()
 
-library(doParallel)
+# library(doParallel)
 no.cores = round(detectCores() * 0.75)
 cl = makeCluster(spec = no.cores, type = 'PSOCK')
 registerDoParallel(cl)
+
+d <- 500
+
+iterations <- 100
 
 #1.
 rho.sin <- function(a, b) {
@@ -39,21 +43,6 @@ rho.cos <- function(a, b, c1) {
 
 #4.
 rho.cos.comp <- function(a, b, c1) {
-   
-   # if (prod(a == c1) == 1 || prod(b == c1) == 1)
-   #    return(0)
-   
-   # if (sum(a == c1) > 0 || sum(b == c1) > 0)
-   #    return(0)
-   # 
-   # else{
-   #    tmp = sapply(1:length(a), function(val) {
-   #       acos(((a[val] - c1[val]) * (b[val] - c1[val])) /
-   #               abs((a[val] - c1[val]) * (b[val] - c1[val])))
-   #    })
-   # 
-   #    return(mean(tmp) / pi)
-      
    return(length(which(sign((a - c1) * (b - c1)) == -1)) / length(a))
 }
 
@@ -61,29 +50,31 @@ rho.cos.comp <- function(a, b, c1) {
 clusterExport(cl, ls())
 
 
-forplot = NULL
-
 e0.sin <- e0.sin.comp <- e0.cos <- e0.cos.comp <- 
    e1.sin <- e1.sin.comp <- e1.cos <- e1.cos.comp <- 
    e2.sin <- e2.sin.comp <- e2.cos <- e2.cos.comp <- c()
 
-for (u in 1:25) {
+for (u in 1 : iterations) {
    n <- 20
    m <- 20
    ns <- 100
    ms <- 100
    
-   d <- 100
-   
-   X <- matrix(rnorm((n + ns) * d, 0, sqrt(3)),
+   X <- matrix(rnorm((n + ns) * d, 0, sqrt(1)),
              nrow = n + ns,
              ncol = d,
              byrow = TRUE)
    
-   Y <- matrix(rt((m + ms) * d, df = 3),
-            nrow = m + ms,
-            ncol = d,
-            byrow = TRUE)
+   Y <- matrix(rnorm((m + ms) * d, 1, sqrt(1)),
+               nrow = m + ms,
+               ncol = d,
+               byrow = TRUE)
+   
+   
+   # Y <- matrix(rt((m + ms) * d, df = 3),
+   #          nrow = m + ms,
+   #          ncol = d,
+   #          byrow = TRUE)
    
    Z <- rbind(X[(n + 1):(n + ns),], Y[(m + 1):(m + ms),])     ## Test Observations
    
@@ -318,13 +309,17 @@ for (u in 1:25) {
    
    
    #### CLASSIFIER 1
-   delta1_Z.sin = (W0_FG.sin * sign(delta0_Z.sin) * 0.5) + (S_FG.sin * sign(S_Z.sin) * 0.5)
+   delta1_Z.sin = (W0_FG.sin * sign(delta0_Z.sin) * 0.5) + 
+      (S_FG.sin * sign(S_Z.sin) * 0.5)
    
-   delta1_Z.sin.comp = (W0_FG.sin.comp * sign(delta0_Z.sin.comp) * 0.5) + (S_FG.sin.comp * sign(S_Z.sin.comp) * 0.5)
+   delta1_Z.sin.comp = (W0_FG.sin.comp * sign(delta0_Z.sin.comp) * 0.5) + 
+      (S_FG.sin.comp * sign(S_Z.sin.comp) * 0.5)
    
-   delta1_Z.cos = (W0_FG.cos * sign(delta0_Z.cos) * 0.5) + (S_FG.cos * sign(S_Z.cos) * 0.5)
+   delta1_Z.cos = (W0_FG.cos * sign(delta0_Z.cos) * 0.5) + 
+      (S_FG.cos * sign(S_Z.cos) * 0.5)
    
-   delta1_Z.cos.comp = (W0_FG.cos.comp * sign(delta0_Z.cos.comp) * 0.5) + (S_FG.cos.comp * sign(S_Z.cos.comp) * 0.5)
+   delta1_Z.cos.comp = (W0_FG.cos.comp * sign(delta0_Z.cos.comp) * 0.5) + 
+      (S_FG.cos.comp * sign(S_Z.cos.comp) * 0.5)
    
    
    el.1.sin[which(delta1_Z.sin > 0)] <- 1
@@ -366,6 +361,7 @@ for (u in 1:25) {
    el.2.cos.comp[which(delta2_Z.cos.comp > 0)] <- 1
    el.2.cos.comp[which(delta2_Z.cos.comp <= 0)] <- 2
    
+   
    e0.sin[u] <- sum(ground.label != el.0.sin) / (ns + ms)
    e0.sin.comp[u] <- sum(ground.label != el.0.sin.comp) / (ns + ms)
    e0.cos[u] <- sum(ground.label != el.0.cos) / (ns + ms)
@@ -380,7 +376,15 @@ for (u in 1:25) {
    e2.sin.comp[u] <- sum(ground.label != el.2.sin.comp) / (ns + ms)
    e2.cos[u] <- sum(ground.label != el.2.cos) / (ns + ms)
    e2.cos.comp[u] <- sum(ground.label != el.2.cos.comp) / (ns + ms)
+   
+   print(u)
 }
+
+all.info.matrix <- matrix(c(e0.sin, e0.sin.comp, e0.cos, e0.cos.comp,
+                            e1.sin, e1.sin.comp, e1.cos, e1.cos.comp,
+                            e2.sin, e2.sin.comp, e2.cos, e2.cos.comp),
+                          nrow = 12, ncol = iterations,
+                          byrow = TRUE)
 
 e0.mean <- c(mean(e0.sin),
              mean(e0.sin.comp),
@@ -402,13 +406,17 @@ e0.sd <- c(sd(e0.sin), sd(e0.sin.comp), sd(e0.cos), sd(e0.cos.comp))
 e1.sd <- c(sd(e1.sin), sd(e1.sin.comp), sd(e1.cos), sd(e1.cos.comp))
 e2.sd <- c(sd(e2.sin), sd(e2.sin.comp), sd(e2.cos), sd(e2.cos.comp))
 
-exec.time <- proc.time() - start.time
+all.error.means <- list("Error Proportions for CLASSIFIER #0" = e0.mean,
+                        "Error Proportions for CLASSIFIER #1" = e1.mean,
+                        "Error Proportions for CLASSIFIER #2" = e2.mean,)
 
+print(all.error.means)
+
+
+exec.time <- proc.time() - start.time
 print(exec.time)
 
 stopCluster(cl)
 gc()
 
-e0.mean
-e1.mean
-e2.mean
+
