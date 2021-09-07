@@ -8,7 +8,7 @@ no.cores = round(detectCores() * 0.75)
 cl = makeCluster(spec = no.cores, type = 'PSOCK')
 registerDoParallel(cl)
 
-d <- 500
+d <- 5
 
 iterations <- 100
 
@@ -377,7 +377,7 @@ for (u in 1 : iterations) {
    e2.cos[u] <- sum(ground.label != el.2.cos) / (ns + ms)
    e2.cos.comp[u] <- sum(ground.label != el.2.cos.comp) / (ns + ms)
    
-   print(u)
+   # print(u)
 }
 
 all.info.matrix <- matrix(c(e0.sin, e0.sin.comp, e0.cos, e0.cos.comp,
@@ -408,7 +408,7 @@ e2.sd <- c(sd(e2.sin), sd(e2.sin.comp), sd(e2.cos), sd(e2.cos.comp))
 
 all.error.means <- list("Error Proportions for CLASSIFIER #0" = e0.mean,
                         "Error Proportions for CLASSIFIER #1" = e1.mean,
-                        "Error Proportions for CLASSIFIER #2" = e2.mean,)
+                        "Error Proportions for CLASSIFIER #2" = e2.mean)
 
 print(all.error.means)
 
