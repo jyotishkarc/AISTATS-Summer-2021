@@ -28,7 +28,7 @@ rho.sin.comp <- function(a, b) {
       out <- (1 + o1[val]) / sqrt((1 + o2[val]) * (1 + o3[val]))
       
       if (abs(out) > 1) {
-         return(asin(round(out)))
+         return(asin(sign(out)))
       }
       else return(asin(out))
    })
