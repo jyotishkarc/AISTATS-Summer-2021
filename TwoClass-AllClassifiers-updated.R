@@ -76,7 +76,6 @@ for (u in 1 : iterations) {
                ncol = d,
                byrow = TRUE)
    
-   
    # Y <- matrix(rt((m + ms) * d, df = 3),
    #          nrow = m + ms,
    #          ncol = d,
