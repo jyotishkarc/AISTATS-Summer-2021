@@ -1,4 +1,4 @@
-#------------------------------------------------------------------------
+
 X.train #read the training set 
 X.test #read the test set
 X = rbind(X.train, X.test)
