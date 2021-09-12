@@ -7,7 +7,7 @@ no.cores = round(detectCores() * 0.75)
 cl = makeCluster(spec = no.cores, type = 'PSOCK')
 registerDoParallel(cl)
 
-d <- 50     # d = 5, 10, 25, 50, 100, 250, 500, 1000
+d <- 250     # d = 5, 10, 25, 50, 100, 250, 500, 1000
 
 iterations <- 100
 
@@ -66,20 +66,30 @@ for (u in 1 : iterations) {
    ns <- 100
    ms <- 100
    
-   X <- matrix(rnorm((n + ns) * d, 0, 1),
-             nrow = n + ns,
-             ncol = d,
-             byrow = TRUE)
-   
-   Y <- matrix(rnorm((m + ms) * d, 1, 1),
-               nrow = m + ms,
-               ncol = d,
-               byrow = TRUE)
+   # X <- matrix(rnorm((n + ns) * d, 0, 1),
+   #           nrow = n + ns,
+   #           ncol = d,
+   #           byrow = TRUE)
+   # 
+   # Y <- matrix(rnorm((m + ms) * d, 1, 1),
+   #             nrow = m + ms,
+   #             ncol = d,
+   #             byrow = TRUE)
    
    # Y <- matrix(rt((m + ms) * d, df = 3),
    #          nrow = m + ms,
    #          ncol = d,
    #          byrow = TRUE)
+   
+   X <- matrix(rexp((n + ns) * d, 1),
+               nrow = n + ns,
+               ncol = d,
+               byrow = TRUE) - 1
+   
+   Y <- matrix(rexp((m + ms) * d, 2),
+               nrow = m + ms,
+               ncol = d,
+               byrow = TRUE) * 2
    
    Z <- rbind(X[(n + 1):(n + ns),], Y[(m + 1):(m + ms),])     ## Test Observations
    
@@ -418,6 +428,7 @@ all.error.sd <- list("SD of Error Proportions for CLASSIFIER #0" = e0.sd,
                      "SD of Error Proportions for CLASSIFIER #1" = e1.sd,
                      "SD of Error Proportions for CLASSIFIER #2" = e2.sd)
 
+cat("\nDimension =", d, "\n\n")
 
 print(all.error.means)
 print(all.error.sd)
