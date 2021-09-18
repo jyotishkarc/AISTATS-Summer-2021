@@ -1,5 +1,5 @@
 
-data.partition <- function(X.train, X.test){
+data.partition.multi <- function(X.train, X.test){
    
    X.train <- as.matrix(X.train)
    X.test <- as.matrix(X.test)
@@ -9,26 +9,25 @@ data.partition <- function(X.train, X.test){
    classes = unique(X[,1])
    # print(classes)
    
-   pops.withlbl <- list(X[X[,1] == classes[1],], X[X[,1] == classes[2],])
+   pops.withlbl <- S.list <- train.sample <- test.sample <- list()
+   
+   for (i in 1:length(classes)) {
+      pops.withlbl[[i]] <- X[X[,1] == classes[i],]
+   }
+   
    nj <- sapply(pops.withlbl, nrow)
-   # print(nj)
    
-   S.1 <- sample(which(X[,1] == classes[1]), round(nj[1]/2))
-   S.2 <- sample(which(X[,1] == classes[2]), round(nj[2]/2))
-   
-   train.1 <- X[S.1,]
-   train.2 <- X[S.2,]
-   
-   # print(c(nrow(train.1), nrow(train.2)))
-   
-   test.1 <- X[setdiff(which(X[,1] == classes[1]), S.1),]
-   test.2 <- X[setdiff(which(X[,1] == classes[2]), S.2),]
+   for (i in 1:length(classes)) {
+      S.list[[i]] <- sample(which(X[,1] == classes[i]), round(nj[i]/2))
+      
+      train.sample[[i]] <- X[S.list[[i]],]
+      test.sample[[i]] <- X[setdiff(which(X[,1] == classes[i]), S.list[[i]]),]
+   }
    
    # print(c(nrow(test.1), nrow(test.2)))
    
-   train.sample <- rbind(train.1, train.2)
-   test.sample <- rbind(test.1, test.2)
+   train.sample <- train.sample %>% do.call('rbind', .) %>% as.matrix()
+   test.sample <- test.sample %>% do.call('rbind', .) %>% as.matrix()
    
-   return(list(as.matrix(train.sample), as.matrix(test.sample)))
-   
+   return(list("TRAIN" = train.sample, "TEST" = test.sample))
 }
