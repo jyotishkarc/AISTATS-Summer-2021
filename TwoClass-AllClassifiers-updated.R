@@ -7,7 +7,7 @@ no.cores = round(detectCores() * 0.75)
 cl = makeCluster(spec = no.cores, type = 'PSOCK')
 registerDoParallel(cl)
 
-d <- 250     # d = 5, 10, 25, 50, 100, 250, 500, 1000
+d <- 5    # d = 5, 10, 25, 50, 100, 250, 500, 1000
 
 iterations <- 100
 
