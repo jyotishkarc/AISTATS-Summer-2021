@@ -48,7 +48,7 @@ labels.rename <- function(X.train, X.test){
    
    X[,1] <- new.label.names[as.factor(originial.labels)]
    
-   return("TRAIN" = list(X[1:nrow(X.train) , ], 
+   return(list("TRAIN" = X[1:nrow(X.train) , ], 
          "TEST" = X[(nrow(X.train)+1):nrow(X) , ]))
 }
 
