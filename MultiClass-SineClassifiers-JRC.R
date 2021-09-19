@@ -18,10 +18,13 @@ no.cores = round(detectCores() * 0.75)
 cl = makeCluster(spec = no.cores, type = 'PSOCK')
 registerDoParallel(cl)
 
-training.data.original <- Wine.train %>% na.omit() %>% as.matrix()
-test.data.original <- Wine.test %>% na.omit() %>% as.matrix()
+training.data.original <- Wafer.train
+test.data.original <- Wafer.test
 
-data.renamed.labels <- labels.rename(training.data.original, test.data.original)
+training.data.cleaned <- training.data.original %>% na.omit() %>% as.matrix()
+test.data.cleaned <- test.data.original %>% na.omit() %>% as.matrix()
+
+data.renamed.labels <- labels.rename(training.data.cleaned, test.data.cleaned)
 
 training.data <- data.renamed.labels$TRAIN
 test.data <- data.renamed.labels$TEST
@@ -44,9 +47,7 @@ for(u in 1:ITER){
       data.training.list[[k]] <- data.training[which(data.training[,1] == k), ]
    }
    
-   
    ground.label.test <- data.test[,-1]     ## Test Observations
-   
    
    data.training.list.unlab <- lapply(data.training.list, function(df) return(df[,-1]))
    
