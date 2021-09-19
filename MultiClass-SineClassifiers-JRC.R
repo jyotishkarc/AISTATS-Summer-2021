@@ -18,8 +18,8 @@ no.cores = round(detectCores() * 0.75)
 cl = makeCluster(spec = no.cores, type = 'PSOCK')
 registerDoParallel(cl)
 
-training.data.original <- Wafer.train
-test.data.original <- Wafer.test
+training.data.original <- Wine.train
+test.data.original <- Wine.test
 
 training.data.cleaned <- training.data.original %>% na.omit() %>% as.matrix()
 test.data.cleaned <- test.data.original %>% na.omit() %>% as.matrix()
@@ -51,7 +51,7 @@ for(u in 1:ITER){
    
    data.training.list.unlab <- lapply(data.training.list, function(df) return(df[,-1]))
    
-   print("Hello 1")
+   # print("Hello 1")
    
    Tjj = lapply(data.training.list.unlab, function(df){
       
@@ -61,16 +61,15 @@ for(u in 1:ITER){
       return(c(sum(tsin), sum(tsin.comp))/(nrow(df) * (nrow(df) - 1)))
    })
    
-   print("Hello 2")
+   # print("Hello 2")
    
-   Tjj <- do.call('rbind', Tjj)
-   Tjj <- as.data.frame(Tjj)
+   Tjj <- Tjj %>% do.call('rbind', .) %>% as.data.frame()
    
    colnames(Tjj) <- c('sin','sin.comp')
    
    clusterExport(cl, c('Tjj', 'data.training.list.unlab'))
    
-   print("Hello 3")
+   # print("Hello 3")
    
    lbl.ensmbl = t(parApply(cl, data.test[,-1] , 1, function(Z){
       
