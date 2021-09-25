@@ -47,7 +47,7 @@ for(u in 1:ITER){
       data.training.list[[k]] <- data.training[which(data.training[,1] == k), ]
    }
    
-   ground.label.test <- data.test[,-1]     ## Test Observations
+   ground.label.test <- data.test[,1]     ## Test Observations
    
    data.training.list.unlab <- lapply(data.training.list, function(df) return(df[,-1]))
    
