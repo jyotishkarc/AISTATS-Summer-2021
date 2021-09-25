@@ -53,6 +53,8 @@ dissim.sin.comp <- function(train.set, no.cores){
    rho.sin.comp <- parDist(train.set, 
                           method = "custom", 
                           func = pairEnergyFuncPtr,
+                          upper = TRUE,
+                          diag = TRUE,
                           threads = no.cores)
    
    return(rho.sin.comp)

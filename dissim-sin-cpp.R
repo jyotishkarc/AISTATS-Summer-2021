@@ -58,6 +58,8 @@ dissim.sin <- function(train.set, no.cores){
    rho.sin = parDist(train.set, 
                      method = "custom", 
                      func = FuncPtr,
+                     upper = TRUE,
+                     diag = TRUE,
                      threads = no.cores)
    
    return(rho.sin)
