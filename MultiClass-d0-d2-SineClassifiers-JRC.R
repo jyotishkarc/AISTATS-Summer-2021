@@ -75,8 +75,8 @@ for(u in 1:ITER){
       for (j in 1:i) {
          mat1 <- data.training.list.unlab[[i]]
          mat2 <- data.training.list.unlab[[j]]
-         print(dim(mat1))
-         print(dim(mat2))
+         # print(dim(mat1))
+         # print(dim(mat2))
          y <- as.matrix(dissim.sin(rbind(mat1,mat2), no.cores = no.cores))
          y <- y[((nrow(mat1)+1):(nrow(mat1)+nrow(mat2))), 1:nrow(mat1)]
          T.sin[j,i] <- T.sin[i,j] <- sum(y)/(nrow(mat1) * nrow(mat2))
@@ -90,19 +90,13 @@ for(u in 1:ITER){
       T.sin[i,i] <- T.sin.comp[i,i] <- 0
    }
    
-   # print("Hello 2")
-   
    Tjj <- Tjj %>% do.call('rbind', .) %>% as.data.frame()
-   
    colnames(Tjj) <- c('sin','sin.comp')
    
    clusterExport(cl, c('Tjj', 'data.training.list.unlab',
                        'no.of.classes','T.sin','T.sin.comp'))
    
-   # print("Hello 3")
-   
    lbl.ensmbl = t(parApply(cl, data.test[,-1] , 1, function(Z){
-      
       Z <- as.numeric(Z)
       
       TjZ.tmp <- lapply(data.training.list.unlab, function(df){
@@ -155,7 +149,6 @@ for(u in 1:ITER){
             else ind.Z.sin.comp[i,j] <- 0
          }
       }
-      
       
       
       return(c(which.min(Tjj$sin/2 - TjZ[,1]), 
