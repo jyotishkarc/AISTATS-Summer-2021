@@ -8,8 +8,7 @@ data.partition.multi <- function(X.train, X.test, seed = NULL){
    
    X <- rbind(X.train, X.test)
    
-   classes = unique(X[,1])
-   # print(classes)
+   classes <- unique(X[,1])
    
    partitioned.list <- selected.list <- train.sample <- test.sample <- list()
    
@@ -23,7 +22,8 @@ data.partition.multi <- function(X.train, X.test, seed = NULL){
    
    for (i in 1:length(classes)) {
       selected.list[[i]] <- sample(which(X[,1] == classes[i]), 
-                                   round(partitioned.rows[i]/2))
+                                   round(partitioned.rows[i]/2),
+                                   replace = FALSE)
       
       train.sample[[i]] <- X[selected.list[[i]],]
       test.sample[[i]] <- X[setdiff(which(X[,1] == classes[i]), 
