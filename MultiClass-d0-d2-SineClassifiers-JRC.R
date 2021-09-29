@@ -1,6 +1,7 @@
 
 library(magrittr)
 library(doParallel)
+# library(Rcpp)
 library(RcppArmadillo)
 library(RcppXPtrUtils)
 library(parallelDist)
@@ -8,23 +9,21 @@ library(parallelDist)
 
 start.time <- proc.time()
 
-ITER = 50
-
-# source('~/R/R Codes/Classification of HDLSS Data (Summer, 2021)/HDLSS-Summer-2021/dataset-partitioning-jrc.R')
-# source('~/R/R Codes/Classification of HDLSS Data (Summer, 2021)/HDLSS-Summer-2021/dissim-sin-cpp.R')
-# source('~/R/R Codes/Classification of HDLSS Data (Summer, 2021)/HDLSS-Summer-2021/dissim-sin-comp-cpp.R')
+ITER <- 50
 
 no.cores = round(detectCores() * 0.75)
 cl = makeCluster(spec = no.cores, type = 'PSOCK')
 registerDoParallel(cl)
 
-training.data.original <- Beef.train
-test.data.original <- Beef.test
+training.data.original <- DodgerLoopGame.train
+test.data.original <- DodgerLoopGame.test
 
 training.data.cleaned <- training.data.original %>% na.omit() %>% as.matrix()
 test.data.cleaned <- test.data.original %>% na.omit() %>% as.matrix()
 
 data.renamed.labels <- labels.rename(training.data.cleaned, test.data.cleaned)
+
+rm(training.data.cleaned, test.data.cleaned)
 
 training.data <- data.renamed.labels$TRAIN
 test.data <- data.renamed.labels$TEST
@@ -44,7 +43,7 @@ for(u in 1:ITER){
    
    print(u)
    
-   partitioned.data <- data.partition.multi(training.data, test.data)
+   partitioned.data <- data.partition.multi(training.data, test.data, u)
    data.training <- as.matrix(partitioned.data[[1]])
    data.test <- as.matrix(partitioned.data[[2]])
    
@@ -61,13 +60,17 @@ for(u in 1:ITER){
    
    # print("Hello 1")
    
-   Tjj = lapply(data.training.list.unlab, function(df){
+   Tjj <- lapply(data.training.list.unlab, function(df){
       
-      tsin <- dissim.sin(train.set = as.matrix(df), no.cores = no.cores)
-      tsin.comp <- dissim.sin.comp(train.set = as.matrix(df), no.cores = no.cores)
+      tsin <- dissim.sin(train.set = as.matrix(df), 
+                         no.cores = no.cores)
+      tsin.comp <- dissim.sin.comp(train.set = as.matrix(df), 
+                                   no.cores = no.cores)
       
       return(c(sum(tsin), sum(tsin.comp))/(nrow(df) * (nrow(df) - 1)))
    })
+   
+   # print(Tjj)
    
    T.sin <- T.sin.comp <- matrix(0, no.of.classes, no.of.classes)
    
@@ -89,8 +92,12 @@ for(u in 1:ITER){
       T.sin[i,i] <- T.sin.comp[i,i] <- 0
    }
    
+   print(T.sin)
+   print(T.sin.comp)
+   
    Tjj <- Tjj %>% do.call('rbind', .) %>% as.data.frame()
    colnames(Tjj) <- c('sin','sin.comp')
+   print(Tjj)
    
    clusterExport(cl, c('Tjj', 'data.training.list.unlab',
                        'no.of.classes','T.sin','T.sin.comp'))
@@ -100,7 +107,7 @@ for(u in 1:ITER){
       
       TjZ.tmp <- lapply(data.training.list.unlab, function(df){
          
-         return(colMeans(apply(df,1,function(vec){
+         return(colMeans(t(apply(df,1,function(vec){
             vec <- as.numeric(vec)
             
             u1 <- 1 + (t(vec) %*% Z)
@@ -117,15 +124,16 @@ for(u in 1:ITER){
             r2 <- mean(asin(v1/sqrt(v2*v3))) #sine component-wise
             
             return(c(r1,r2))
-         })))
+         }))))
       })
       
       TjZ <- do.call('rbind', TjZ.tmp)
       
       LjZ <- cbind((Tjj$sin/2 - TjZ[,1]), (Tjj$sin.comp/2 - TjZ[,2]))
+      # print(LjZ)
       
-      indicator_Z.sin <- indicator_Z.sin.comp <- ind.Z.sin <- ind.Z.sin.comp <-
-         matrix(0, no.of.classes, no.of.classes)
+      indicator_Z.sin <- indicator_Z.sin.comp <- ind.Z.sin <- 
+         ind.Z.sin.comp <- matrix(0, no.of.classes, no.of.classes)
       
       for (i in 1 : no.of.classes) {
          for (j in 1:i) {
@@ -134,26 +142,35 @@ for(u in 1:ITER){
                (LjZ[j,1] - LjZ[i,1]) - (Tjj$sin[i] - Tjj$sin[j]) * 
                (LjZ[i,1] + LjZ[j,1] + T.sin[i,j])
             
-            if(indicator_Z.sin[i,j] > 0){ind.Z.sin[i,j] <- i}
-            if(indicator_Z.sin[i,j] < 0){ind.Z.sin[i,j] <- j}
-            else ind.Z.sin[i,j] <- 0
+            if(indicator_Z.sin[i,j] > 0){
+               ind.Z.sin[i,j] <- ind.Z.sin[j,i] <- i}
+            if(indicator_Z.sin[i,j] <= 0){
+               ind.Z.sin[i,j] <- ind.Z.sin[j,i] <- j}
+            #else ind.Z.sin[i,j] <- 0
             
-            indicator_Z.sin.comp[i,j] <- indicator_Z.sin.comp[j,i] <-
+            indicator_Z.sin.comp[i,j] <-
                (Tjj$sin.comp[i] + Tjj$sin.comp[j] - 2 * T.sin.comp[i,j]) * 
-               (LjZ[j,1] - LjZ[i,1]) - (Tjj$sin.comp[i] - Tjj$sin.comp[j]) *
-               (LjZ[i,1] + LjZ[j,1] + T.sin.comp[i,j])
+               (LjZ[j,2] - LjZ[i,2]) - (Tjj$sin.comp[i] - Tjj$sin.comp[j]) *
+               (LjZ[i,2] + LjZ[j,2] + T.sin.comp[i,j])
             
-            if(indicator_Z.sin.comp[i,j] > 0){ind.Z.sin.comp[i,j] <- i}
-            if(indicator_Z.sin.comp[i,j] < 0){ind.Z.sin.comp[i,j] <- j}
-            else ind.Z.sin.comp[i,j] <- 0
+            if(indicator_Z.sin.comp[i,j] > 0){
+               ind.Z.sin.comp[i,j] <- ind.Z.sin.comp[j,i] <- i}
+            if(indicator_Z.sin.comp[i,j] <= 0){
+               ind.Z.sin.comp[i,j] <- ind.Z.sin.comp[j,i] <- j}
+            #else ind.Z.sin.comp[i,j] <- 0
          }
       }
       
+      ind.Z.sin <- as.numeric(ind.Z.sin)
+      ind.Z.sin.comp <- as.numeric(ind.Z.sin.comp)
+      
+      # print(ind.Z.sin)
+      # print(ind.Z.sin.comp)
       
       return(c(which.min(Tjj$sin/2 - TjZ[,1]), 
                which.min(Tjj$sin.comp/2 - TjZ[,2]), 
-               mode.data(as.numeric(indicator_Z.sin)),
-               mode.data(as.numeric(indicator_Z.sin.comp))))
+               mode.data(ind.Z.sin),
+               mode.data(ind.Z.sin.comp)))
    }))
    
    out1[[u]] <- apply(lbl.ensmbl, 2, function(vec){
