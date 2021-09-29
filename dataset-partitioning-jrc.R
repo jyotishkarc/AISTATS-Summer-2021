@@ -1,5 +1,7 @@
 
-data.partition.multi <- function(X.train, X.test){
+library(magrittr)
+
+data.partition.multi <- function(X.train, X.test, seed = NULL){
    
    X.train <- as.matrix(X.train)
    X.test <- as.matrix(X.test)
@@ -17,12 +19,15 @@ data.partition.multi <- function(X.train, X.test){
    
    partitioned.rows <- sapply(partitioned.list, nrow)
    
+   if(is.na(seed) == FALSE) {set.seed(seed)}
+   
    for (i in 1:length(classes)) {
       selected.list[[i]] <- sample(which(X[,1] == classes[i]), 
                                    round(partitioned.rows[i]/2))
       
       train.sample[[i]] <- X[selected.list[[i]],]
-      test.sample[[i]] <- X[setdiff(which(X[,1] == classes[i]), selected.list[[i]]),]
+      test.sample[[i]] <- X[setdiff(which(X[,1] == classes[i]), 
+                                    selected.list[[i]]),]
    }
    
    train.sample <- train.sample %>% do.call('rbind', .) %>% as.matrix()
