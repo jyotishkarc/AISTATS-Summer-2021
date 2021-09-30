@@ -9,10 +9,10 @@ library(parallelDist)
 
 start.time <- proc.time()
 
-ITER <- 50
+ITER <- 15
 
-no.cores = round(detectCores() * 0.75)
-cl = makeCluster(spec = no.cores, type = 'PSOCK')
+no.cores <- round(detectCores() * 0.75)
+cl <- makeCluster(spec = no.cores, type = 'PSOCK')
 registerDoParallel(cl)
 
 training.data.original <- DodgerLoopGame.train
@@ -34,7 +34,7 @@ out1 <- list()
 
 mode.data <- function(x) {
    ux <- unique(x)
-   ux[which.max(tabulate(match(x, ux)))]
+   return(ux[which.max(tabulate(match(x, ux)))])
 }
 
 clusterExport(cl, ls())
@@ -67,7 +67,8 @@ for(u in 1:ITER){
       tsin.comp <- dissim.sin.comp(train.set = as.matrix(df), 
                                    no.cores = no.cores)
       
-      return(c(sum(tsin), sum(tsin.comp))/(nrow(df) * (nrow(df) - 1)))
+      # return(c(sum(tsin), sum(tsin.comp))/(nrow(df) * (nrow(df) - 1)))
+      return(c(sum(tsin), sum(tsin.comp))/(nrow(df)^2))
    })
    
    # print(Tjj)
@@ -129,6 +130,8 @@ for(u in 1:ITER){
       
       TjZ <- do.call('rbind', TjZ.tmp)
       
+      print(TjZ)
+      
       LjZ <- cbind((Tjj$sin/2 - TjZ[,1]), (Tjj$sin.comp/2 - TjZ[,2]))
       # print(LjZ)
       
@@ -146,7 +149,6 @@ for(u in 1:ITER){
                ind.Z.sin[i,j] <- ind.Z.sin[j,i] <- i}
             if(indicator_Z.sin[i,j] <= 0){
                ind.Z.sin[i,j] <- ind.Z.sin[j,i] <- j}
-            #else ind.Z.sin[i,j] <- 0
             
             indicator_Z.sin.comp[i,j] <-
                (Tjj$sin.comp[i] + Tjj$sin.comp[j] - 2 * T.sin.comp[i,j]) * 
@@ -157,9 +159,11 @@ for(u in 1:ITER){
                ind.Z.sin.comp[i,j] <- ind.Z.sin.comp[j,i] <- i}
             if(indicator_Z.sin.comp[i,j] <= 0){
                ind.Z.sin.comp[i,j] <- ind.Z.sin.comp[j,i] <- j}
-            #else ind.Z.sin.comp[i,j] <- 0
          }
       }
+      
+      rm(LjZ, TjZ.tmp, T.sin, T.sin.comp, 
+         indicator_Z.sin, indicator_Z.sin.comp)
       
       ind.Z.sin <- as.numeric(ind.Z.sin)
       ind.Z.sin.comp <- as.numeric(ind.Z.sin.comp)
@@ -179,11 +183,11 @@ for(u in 1:ITER){
 
 out2 <- out1 %>% do.call('rbind', .)
 
-colnames(out2) = c('delta0.sin', 'delta0.sin.comp',
+colnames(out2) <- c('delta0.sin', 'delta0.sin.comp',
                    'delta2.sin', 'delta2.sin.comp')
 
-ERR = colMeans(out2)
-SE = apply(out2, 2, sd) / sqrt(ITER)
+ERR <- colMeans(out2)
+SE <- apply(out2, 2, sd) / sqrt(ITER)
 
 exec.time <- proc.time() - start.time
 print(exec.time)
