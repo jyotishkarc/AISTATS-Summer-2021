@@ -18,7 +18,7 @@ data.partition.multi <- function(X.train, X.test, seed = NULL){
    
    partitioned.rows <- sapply(partitioned.list, nrow)
    
-   if(is.na(seed) == FALSE) {set.seed(seed)}
+   if(is.null(seed) == FALSE) {set.seed(seed)}
    
    for (i in 1:length(classes)) {
       selected.list[[i]] <- sample(which(X[,1] == classes[i]), 
@@ -42,16 +42,16 @@ labels.rename <- function(X.train, X.test){
    X.train <- as.matrix(X.train)
    X.test <- as.matrix(X.test)
    
-   X = rbind(X.train, X.test)
+   X <- rbind(X.train, X.test)
    
    if (length(setdiff(unique(X[,1]), 1:length(unique(X[,1])))) == 0) {
       return(list("TRAIN" = X.train, "TEST" = X.test))
    }
    
-   originial.labels <- X[,1] %>% as.character()
-   new.label.names <- 1 : length(unique(originial.labels))
+   original.labels <- X[,1] %>% as.character()
+   new.label.names <- 1 : length(unique(original.labels))
    
-   X[,1] <- new.label.names[as.factor(originial.labels)]
+   X[,1] <- new.label.names[as.factor(original.labels)]
    
    return(list("TRAIN" = X[1:nrow(X.train) , ], 
          "TEST" = X[(nrow(X.train)+1):nrow(X) , ]))
