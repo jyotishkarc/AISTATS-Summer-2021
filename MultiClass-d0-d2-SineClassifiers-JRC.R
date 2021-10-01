@@ -9,14 +9,14 @@ library(parallelDist)
 
 start.time <- proc.time()
 
-ITER <- 15
+ITER <- 1
 
 no.cores <- round(detectCores() * 0.75)
 cl <- makeCluster(spec = no.cores, type = 'PSOCK')
 registerDoParallel(cl)
 
-training.data.original <- DodgerLoopGame.train
-test.data.original <- DodgerLoopGame.test
+training.data.original <- Beef.train
+test.data.original <- Beef.test
 
 training.data.cleaned <- training.data.original %>% na.omit() %>% as.matrix()
 test.data.cleaned <- test.data.original %>% na.omit() %>% as.matrix()
@@ -43,7 +43,7 @@ for(u in 1:ITER){
    
    print(u)
    
-   partitioned.data <- data.partition.multi(training.data, test.data, u)
+   partitioned.data <- data.partition.multi(training.data, test.data, 4)
    data.training <- as.matrix(partitioned.data[[1]])
    data.test <- as.matrix(partitioned.data[[2]])
    
@@ -81,13 +81,15 @@ for(u in 1:ITER){
          mat2 <- data.training.list.unlab[[j]]
          # print(dim(mat1))
          # print(dim(mat2))
-         y <- as.matrix(dissim.sin(rbind(mat1,mat2), no.cores = no.cores))
-         y <- y[((nrow(mat1)+1):(nrow(mat1)+nrow(mat2))), 1:nrow(mat1)]
-         T.sin[j,i] <- T.sin[i,j] <- sum(y)/(nrow(mat1) * nrow(mat2))
+         y1 <- dissim.sin(rbind(mat1,mat2), no.cores = no.cores)
+         y1 <- as.matrix(y1)
+         y1 <- y1[((nrow(mat1) + 1):(nrow(mat1) + nrow(mat2))), (1 : nrow(mat1))]
+         T.sin[j,i] <- T.sin[i,j] <- sum(y1)/(nrow(mat1) * nrow(mat2))
          
-         y <- as.matrix(dissim.sin.comp(rbind(mat1,mat2), no.cores = no.cores))
-         y <- y[((nrow(mat1)+1):(nrow(mat1)+nrow(mat2))), 1:nrow(mat1)]
-         T.sin.comp[i,j] <- T.sin.comp[j,i] <- sum(y)/(nrow(mat1) * nrow(mat2))
+         y2 <- dissim.sin.comp(rbind(mat1,mat2), no.cores = no.cores)
+         y2 <- as.matrix(y2)
+         y2 <- y2[((nrow(mat1)+1):(nrow(mat1)+nrow(mat2))), 1:nrow(mat1)]
+         T.sin.comp[i,j] <- T.sin.comp[j,i] <- sum(y2)/(nrow(mat1) * nrow(mat2))
       }
       
       T.sin[i,i] <- T.sin.comp[i,i] <- 0
