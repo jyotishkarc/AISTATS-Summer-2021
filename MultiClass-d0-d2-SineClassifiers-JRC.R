@@ -9,7 +9,7 @@ library(parallelDist)
 
 start.time <- proc.time()
 
-ITER <- 1
+ITER <- 5
 
 no.cores <- round(detectCores() * 0.75)
 cl <- makeCluster(spec = no.cores, type = 'PSOCK')
@@ -132,7 +132,7 @@ for(u in 1:ITER){
       
       TjZ <- do.call('rbind', TjZ.tmp)
       
-      print(TjZ)
+      cat("Hello")
       
       LjZ <- cbind((Tjj$sin/2 - TjZ[,1]), (Tjj$sin.comp/2 - TjZ[,2]))
       # print(LjZ)
