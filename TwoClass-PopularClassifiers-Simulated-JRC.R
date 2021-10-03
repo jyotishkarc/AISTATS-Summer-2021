@@ -267,8 +267,7 @@ for (k in 1:length(d.seq)) {
                   e_nnet_log_1, e_nnet_log_3, e_nnet_log_5, e_nnet_log_10,
                   e_nnet_ReLU_1, e_nnet_ReLU_3, e_nnet_ReLU_5, e_nnet_ReLU_10,
                   e_onn
-                  #e_bayes_risk
-                  ))
+               ))
          
       }
    
@@ -300,23 +299,11 @@ res.list <- list("d=5" = res.list[[1]],
                  "d=1000" = res.list[[8]])
 
 writexl::write_xlsx(res.list, "C:\\Users\\JYOTISHKA\\Desktop\\Normal-vs-t.xlsx")
-#writexl::write_xlsx(res.list, "C:\\Users\\JYOTISHKA\\Desktop\\Normal-vs-t.xlsx")
 
 stopCluster(cl)
 gc()
 
-
-
-
-
-
-
-
-
-
-
-
-
+source('~/R/R Codes/Classification of HDLSS Data (Summer, 2021)/HDLSS-Summer-2021/TwoClass-PopularClassifiers-N01-vs-N02-JRC.R')
 
 
 
