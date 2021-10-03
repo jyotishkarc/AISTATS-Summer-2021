@@ -160,22 +160,22 @@ for (k in 1:length(d.seq)) {
                                        y = class.ind(c(rep(1,n), rep(2,n))),
                                        size = 1,
                                        linout = TRUE,
-                                       MaxNWts = 12000)
+                                       MaxNWts = 15000)
            mdl.nnet.logistic.3 <- nnet(x = train.sample,
                                        y = class.ind(c(rep(1,n), rep(2,n))),
                                        size = 3,
                                        linout = TRUE,
-                                       MaxNWts = 12000)
+                                       MaxNWts = 15000)
            mdl.nnet.logistic.5 <- nnet(x = train.sample,
                                        y = class.ind(c(rep(1,n), rep(2,n))),
                                        size = 5,
                                        linout = TRUE,
-                                       MaxNWts = 12000)
+                                       MaxNWts = 15000)
            mdl.nnet.logistic.10 <- nnet(x = train.sample,
                                         y = class.ind(c(rep(1,n), rep(2,n))),
                                         size = 10,
                                         linout = TRUE,
-                                        MaxNWts = 12000)
+                                        MaxNWts = 15000)
            
            p_log_1 <- as.numeric(predict(object = mdl.nnet.logistic.1,
                                          newdata = test.sample
@@ -205,22 +205,22 @@ for (k in 1:length(d.seq)) {
                                    y = class.ind(c(rep(1,n), rep(2,n))),
                                    size = 1,
                                    linout = FALSE,
-                                   MaxNWts = 12000)
+                                   MaxNWts = 15000)
            mdl.nnet.ReLU.3 <- nnet(x = train.sample,
                                    y = class.ind(c(rep(1,n), rep(2,n))),
                                    size = 3,
                                    linout = FALSE,
-                                   MaxNWts = 12000)
+                                   MaxNWts = 15000)
            mdl.nnet.ReLU.5 <- nnet(x = train.sample,
                                    y = class.ind(c(rep(1,n), rep(2,n))),
                                    size = 5,
                                    linout = FALSE,
-                                   MaxNWts = 12000)
+                                   MaxNWts = 15000)
            mdl.nnet.ReLU.10 <- nnet(x = train.sample,
                                     y = class.ind(c(rep(1,n), rep(2,n))),
                                     size = 10,
                                     linout = FALSE,
-                                    MaxNWts = 12000)
+                                    MaxNWts = 15000)
            
            p_ReLU_1 <- as.numeric(predict(object = mdl.nnet.ReLU.1,
                                           newdata = test.sample
@@ -289,7 +289,7 @@ for (k in 1:length(d.seq)) {
    res.list[[k]] <- result
 }
 
-res.list <- list("d=5" = res.list[[1]],
+res.list.2 <- list("d=5" = res.list[[1]],
                  "d=10" = res.list[[2]],
                  "d=25" = res.list[[3]],
                  "d=50" = res.list[[4]],
@@ -298,12 +298,12 @@ res.list <- list("d=5" = res.list[[1]],
                  "d=500" = res.list[[7]],
                  "d=1000" = res.list[[8]])
 
-writexl::write_xlsx(res.list, "C:\\Users\\JYOTISHKA\\Desktop\\N01-vs-N02.xlsx")
+writexl::write_xlsx(res.list.2, "C:\\Users\\JYOTISHKA\\Desktop\\N01-vs-N02.xlsx")
 
 stopCluster(cl)
 gc()
 
-
+source('~/R/R Codes/Classification of HDLSS Data (Summer, 2021)/HDLSS-Summer-2021/TwoClass-PopularClassifiers-N01-vs-N11-JRC.R')
 
 
 
