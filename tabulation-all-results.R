@@ -124,6 +124,7 @@ for(j in 2:14){
    df.table[,j] <- round(as.numeric(df.table[,j]), 5)
 }
 
+
 pref.mat <- matrix(0, N, 10)
 B <- H[c(3:4,6:7,9:14)]
 
