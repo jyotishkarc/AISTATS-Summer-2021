@@ -8,31 +8,40 @@ files <- list.files(path = path)
 files.df <- as.data.frame(files, "filenames" = files)
 # filenames <- as.character(files)
 
-#all.UCR <- UCR_datasets <- read_excel("~/UCR-datasets.xlsx", col_names = FALSE)
+## all.UCR <- UCR_datasets <- read_excel("~/UCR-datasets.xlsx", col_names = FALSE)
 
 colnames(all.UCR) <- c('datasets','length')
 N <- nrow(all.UCR)
 
+M.orig <- read.csv("D:/My Documents/Real Data Analysis_ Three Databases - UCR.csv")
+M <- M.orig[ ,-c(2:8)]
+M[27,1] <- "GunPoint1"
+
 # all.UCR$datasets[52] <- "Gunpoint1"
 # all.UCR$datasets[52] <- "Gunpoint1"
 
-df.table <- as.data.frame(matrix(NA, nrow = 2*N, ncol = 14))
-colnames(df.table) <- c("Dataset", "Length", 
-                        "delta0.sin","delta0.sin.comp",
-                        "delta2.sin", "delta2.sin.comp", 
-                        "GLMNET", "RF", "RP",
-                        "SVMlin", "SVMRBF", "Nnet", "1NN", "SAVG")
+df.table <- as.data.frame(matrix(NA, nrow = 2*N, ncol = 15))
+colnames(df.table) <- H <- c("Dataset", "Length", 
+                             "delta0.sin","delta0.sin.comp",
+                             "delta2.sin", "delta2.sin.comp", 
+                             "GLMNET", "RF", "RP",
+                             "SVMlin", "SVMRBF", "Nnet", "1NN", "SAVG","SVMRBF.new")
+
+mV.which <- which(str_detect(files, "majorityVoting"))
+proj.which <- which(str_detect(files, "projavg"))
 
 for (k in 1:N) {
    print(k)
    
-   Z[[k]] <- files.df %>% filter(str_detect(filenames, all.UCR$datasets[k]))
+   Z[[k]] <- files.df %>% filter(str_detect(files, all.UCR$datasets[k]))
    
    if (prod(dim(Z[[k]])) != 0) {
+      
       mV <- Z[[k]] %>% filter(str_detect(files, "majorityVoting"))
+      popular <- Z[[k]] %>% filter(str_detect(files, "popularclassifiers"))
+      SVMRBF <- Z[[k]] %>% filter(str_detect(files, "SVMRBF"))
       SAVG <- Z[[k]] %>% filter(str_detect(files, "SAVG"))
-      # popular <- Z[[k]] %>% filter(str_detect(files, "popular"))
-      # SVMRBF <- Z[[k]] %>% filter(str_detect(files, "SVMRBF"))
+      
       
       if (prod(dim(mV)) != 0) {
          temp.mV <- read.csv(paste(path, as.character(mV), sep = ""))
@@ -41,7 +50,42 @@ for (k in 1:N) {
       }
       else {delta.mean <- delta.se <- rep(NA, 4)}
       
-      popular.mean <- popular.se <- rep(NA, 7)
+      
+      if (prod(dim(popular)) != 0) {
+         temp.popular <- read.csv(paste(path, as.character(popular), sep = ""))
+         temp.popular <- temp.popular[,-1]
+         popular.mean <- colMeans(temp.popular)
+         
+         RF.pos <- which.min(popular.mean[5:8]) + 4
+         popular.mean <- c(popular.mean[1:4], min(popular.mean[5:8]))
+         
+         popular.se <- apply(temp.popular, 2, function(val) sciplot::se(val))
+         popular.se <- c(popular.se[1:4], popular.se[RF.pos])
+         
+         popular.mean <- c(popular.mean[1], popular.mean[5], popular.mean[2],
+                           popular.mean[3], popular.mean[4], NA, NA)
+         popular.se <- c(popular.se[1], popular.se[5], popular.se[2],
+                         popular.se[3], popular.se[4], NA, NA)
+         
+         bin <- str_detect(M[,1], fixed(all.UCR$datasets[k], 
+                                        ignore_case = TRUE))
+         if (sum(bin) > 0) {
+            pos <- which(bin)
+            popular.mean <- M[pos,-1]
+            popular.se <- rep(NA, 7)
+         }
+      }
+      else {
+         bin <- str_detect(M[,1], fixed(all.UCR$datasets[k], 
+                                 ignore_case = TRUE))
+         if (sum(bin) > 0) {
+            pos <- which(bin)
+            popular.mean <- M[pos,-1]
+            popular.se <- rep(NA, 7)
+         }
+         else {popular.mean <- popular.se <- rep(NA, 7)}
+      }
+      
       
       if (prod(dim(SAVG)) != 0) {
          temp.SAVG <- read.csv(paste(path, as.character(SAVG), sep = ""))
@@ -50,22 +94,57 @@ for (k in 1:N) {
       }
       else {savg.value <- savg.se <- NA}
       
+      
+      if (prod(dim(SVMRBF)) != 0) {
+         temp.SVMRBF <- read.csv(paste(path, as.character(SVMRBF), sep = ""))
+         temp.SVMRBF <- as.matrix(temp.SVMRBF[,2])
+         svmrbf.mean <- colMeans(temp.SVMRBF)
+         svmrbf.se <- apply(temp.SVMRBF, 2, function(val) sciplot::se(val))
+      }
+      else {svmrbf.value <- svmrbf.se <- NA}
+      
+      
       df.table[(2*k - 1), ] <- c(all.UCR$datasets[k], all.UCR$length[k],
-                                 delta.mean, popular.mean, savg.mean)
-      df.table[(2*k), ] <- c(all.UCR$datasets[k], all.UCR$length[k],
-                             delta.se, popular.se, savg.se)
+                                 delta.mean, popular.mean, savg.mean, svmrbf.mean)
+      df.table[(2*k), ] <- c(" ", all.UCR$length[k],
+                             delta.se, popular.se, savg.se, svmrbf.se)
    }
    else {df.table[(2*k - 1), ] <- c(all.UCR$datasets[k], all.UCR$length[k],
-                                    rep(NA, 12))
-         df.table[(2*k), ] <- c(all.UCR$datasets[k], all.UCR$length[k],
-                                rep(NA, 12))
+                                    rep(NA, 13))
+         df.table[(2*k), ] <- c(" ", all.UCR$length[k],
+                                rep(NA, 13))
    }
-
 }
 
 
+df.table$SVMRBF <- df.table$SVMRBF.new
+df.table <- df.table[,-15]
 
+for(j in 2:14){
+   df.table[,j] <- round(as.numeric(df.table[,j]), 5)
+}
 
+pref.mat <- matrix(0, N, 10)
+B <- H[c(3:4,6:7,9:14)]
+
+for (i in 1:N) {
+   if(is.na(df.table[(2*i-1),7]) == FALSE){
+     R <- df.table[(2*i-1),c(3:4,6:7,9:14)] %>%
+        as.numeric() %>%
+        rank(ties.method = "random")
+
+     v <- c()
+     for(j in 1:10){
+        v[j] <- B[which(R == j)]
+     }
+
+     pref.mat[i,] <- v
+   }
+   else pref.mat[i,] <- rep(NA,10)
+}
+
+pref.mat <- cbind(all.UCR$datasets, pref.mat)
+pref.mat.no.NA <- na.omit(pref.mat)
 
 
 
