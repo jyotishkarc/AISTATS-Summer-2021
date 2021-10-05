@@ -159,104 +159,63 @@ for (k in 1:length(d.seq)) {
          
          ##### Logistic Activation
          
-         # ff <- factor(train.label)
-         # train.temp <- data.frame(train.sample, ff)
-         # 
-         # mdl.nnet.logistic.1 <- nnet(ff ~ . , data = train.temp,
-         #                             size = 5, decay = 5e-4)
-         # 
-         # 
-         # 
-         # mdl.nnet.logistic.1 <- nnet(x = train.sample,
-         #                             y = class.ind(c(rep(1,n), rep(2,n))),
-         #                             size = 1,
-         #                             linout = TRUE,
-         #                             MaxNWts = 15000)
-         # mdl.nnet.logistic.3 <- nnet(x = train.sample,
-         #                             y = class.ind(c(rep(1,n), rep(2,n))),
-         #                             size = 3,
-         #                             linout = TRUE,
-         #                             MaxNWts = 15000)
-         # mdl.nnet.logistic.5 <- nnet(x = train.sample,
-         #                             y = class.ind(c(rep(1,n), rep(2,n))),
-         #                             size = 5,
-         #                             linout = TRUE,
-         #                             MaxNWts = 15000)
-         # mdl.nnet.logistic.10 <- nnet(x = train.sample,
-         #                             y = class.ind(c(rep(1,n), rep(2,n))),
-         #                             size = 10,
-         #                             linout = TRUE,
-         #                             MaxNWts = 15000)
-         # 
-         # p_log_1 <- as.numeric(predict(object = mdl.nnet.logistic.1,
-         #                               newdata = test.sample
-         #                               #type = 'class'
-         #                               ))
-         # p_log_3 <- as.numeric(predict(object = mdl.nnet.logistic.3,
-         #                               newdata = test.sample
-         #                               #type = 'class'
-         #                               ))
-         # p_log_5 <- as.numeric(predict(object = mdl.nnet.logistic.5,
-         #                               newdata = test.sample
-         #                               #type = 'class'
-         #                               ))
-         # p_log_10 <- as.numeric(predict(object = mdl.nnet.logistic.10,
-         #                               newdata = test.sample
-         #                               #type = 'class'
-         #                               ))
-         # 
-         # e_nnet_log_1 <- mean(p_log_1 != test.label)
-         # e_nnet_log_3 <- mean(p_log_3 != test.label)
-         # e_nnet_log_5 <- mean(p_log_5 != test.label)
-         # e_nnet_log_10 <- mean(p_log_10 != test.label)
-         # 
-         # ##### ReLU Activation
-         # 
-         # mdl.nnet.ReLU.1 <- nnet(x = train.sample,
-         #                         y = class.ind(c(rep(1,n), rep(2,n))),
-         #                         size = 1,
-         #                         linout = FALSE,
-         #                         MaxNWts = 15000)
-         # mdl.nnet.ReLU.3 <- nnet(x = train.sample,
-         #                         y = class.ind(c(rep(1,n), rep(2,n))),
-         #                         size = 3,
-         #                         linout = FALSE,
-         #                         MaxNWts = 15000)
-         # mdl.nnet.ReLU.5 <- nnet(x = train.sample,
-         #                         y = class.ind(c(rep(1,n), rep(2,n))),
-         #                         size = 5,
-         #                         linout = FALSE,
-         #                         MaxNWts = 15000)
-         # mdl.nnet.ReLU.10 <- nnet(x = train.sample,
-         #                          y = class.ind(c(rep(1,n), rep(2,n))),
-         #                          size = 10,
-         #                          linout = FALSE,
-         #                          MaxNWts = 15000)
-         # 
-         # p_ReLU_1 <- as.numeric(predict(object = mdl.nnet.ReLU.1,
-         #                               newdata = test.sample
-         #                               #type = 'class'
-         #                               ))
-         # p_ReLU_3 <- as.numeric(predict(object = mdl.nnet.ReLU.3,
-         #                               newdata = test.sample
-         #                               #type = 'class'
-         #                               ))
-         # p_ReLU_5 <- as.numeric(predict(object = mdl.nnet.ReLU.5,
-         #                               newdata = test.sample
-         #                               #type = 'class'
-         #                               ))
-         # p_ReLU_10 <- as.numeric(predict(object = mdl.nnet.ReLU.10,
-         #                                newdata = test.sample
-         #                                #type = 'class'
-         #                                ))
-         # 
-         # e_nnet_ReLU_1 <- mean(p_ReLU_1 != test.label)
-         # e_nnet_ReLU_3 <- mean(p_ReLU_3 != test.label)
-         # e_nnet_ReLU_5 <- mean(p_ReLU_5 != test.label)
-         # e_nnet_ReLU_10 <- mean(p_ReLU_10 != test.label)
+         Q <- data.frame(rbind(train.sample, test.sample))
+         targets <- class.ind(c(train.label, test.label))
          
-         e_nnet_log_1 <- e_nnet_log_3 <- e_nnet_log_5 <- e_nnet_log_10 <- 
-            e_nnet_ReLU_1 <- e_nnet_ReLU_3 <- e_nnet_ReLU_5 <- e_nnet_ReLU_10 <- 50
+         mdl.nnet.logistic.1 <- nnet(Q[1:40,], targets[1:40,], size = 1,
+                                   decay = 5e-4, maxit = 100, MaxNWts = 10100, 
+                                   linout = FALSE)
+         
+         mdl.nnet.logistic.3 <- nnet(Q[1:40,], targets[1:40,], size = 3,
+                                     decay = 5e-4, maxit = 100, MaxNWts = 10100, 
+                                     linout = FALSE)
+         
+         mdl.nnet.logistic.5 <- nnet(Q[1:40,], targets[1:40,], size = 5,
+                                     decay = 5e-4, maxit = 100, MaxNWts = 10100, 
+                                     linout = FALSE)
+         
+         mdl.nnet.logistic.10 <- nnet(Q[1:40,], targets[1:40,], size = 10,
+                                      decay = 5e-4, maxit = 100, MaxNWts = 10100, 
+                                      linout = FALSE)
+         
+         p_log_1 <- predict(mdl.nnet.logistic.1, Q.total[-c(1:40),])
+         p_log_3 <- predict(mdl.nnet.logistic.3, Q.total[-c(1:40),])
+         p_log_5 <- predict(mdl.nnet.logistic.5, Q.total[-c(1:40),])
+         p_log_10 <- predict(mdl.nnet.logistic.10, Q.total[-c(1:40),])
+         
+         e_nnet_log_1 <- mean(apply(p_log_1, 1, which.max) != test.label)
+         e_nnet_log_3 <- mean(apply(p_log_3, 1, which.max) != test.label)
+         e_nnet_log_5 <- mean(apply(p_log_5, 1, which.max) != test.label)
+         e_nnet_log_10 <- mean(apply(p_log_10, 1, which.max) != test.label)
+
+         
+         # ##### ReLU Activation
+         
+         mdl.nnet.ReLU.1 <- nnet(Q[1:40,], targets[1:40,], size = 1,
+                                     decay = 5e-4, maxit = 100, MaxNWts = 10100, 
+                                     linout = TRUE)
+         
+         mdl.nnet.ReLU.3 <- nnet(Q[1:40,], targets[1:40,], size = 3,
+                                     decay = 5e-4, maxit = 100, MaxNWts = 10100, 
+                                     linout = TRUE)
+         
+         mdl.nnet.ReLU.5 <- nnet(Q[1:40,], targets[1:40,], size = 5,
+                                     decay = 5e-4, maxit = 100, MaxNWts = 10100, 
+                                     linout = TRUE)
+         
+         mdl.nnet.ReLU.10 <- nnet(Q[1:40,], targets[1:40,], size = 10,
+                                      decay = 5e-4, maxit = 100, MaxNWts = 10100, 
+                                      linout = TRUE)
+         
+         p_ReLU_1 <- predict(mdl.nnet.ReLU.1, Q.total[-c(1:40),])
+         p_ReLU_3 <- predict(mdl.nnet.ReLU.3, Q.total[-c(1:40),])
+         p_ReLU_5 <- predict(mdl.nnet.ReLU.5, Q.total[-c(1:40),])
+         p_ReLU_10 <- predict(mdl.nnet.ReLU.10, Q.total[-c(1:40),])
+         
+         e_nnet_ReLU_1 <- mean(apply(p_ReLU_1, 1, which.max) != test.label)
+         e_nnet_ReLU_3 <- mean(apply(p_ReLU_3, 1, which.max) != test.label)
+         e_nnet_ReLU_5 <- mean(apply(p_ReLU_5, 1, which.max) != test.label)
+         e_nnet_ReLU_10 <- mean(apply(p_ReLU_10, 1, which.max) != test.label)
          
          
          ################################ One Nearest Neighbour
@@ -338,5 +297,24 @@ gc()
 
 # source('~/R/R Codes/Classification of HDLSS Data (Summer, 2021)/HDLSS-Summer-2021/TwoClass-PopularClassifiers-N01-vs-N02-JRC.R')
 
+########################
 
-
+# ir <- rbind(iris3[,,1],iris3[,,2],iris3[,,3])
+# targets <- class.ind( c(rep("s", 50), rep("c", 50), rep("v", 50)) )
+# samp <- c(sample(1:50,25), sample(51:100,25), sample(101:150,25))
+# ir1 <- nnet(ir[samp,], targets[samp,], size = 2, rang = 0.1,
+#             decay = 5e-4, maxit = 200)
+# test.cl <- function(true, pred) {
+#    true <- max.col(true)
+#    cres <- max.col(pred)
+#    table(true, cres)
+# }
+# test.cl(targets[-samp,], predict(ir1, ir[-samp,]))
+# 
+# 
+# # or
+# ird <- data.frame(rbind(iris3[,,1], iris3[,,2], iris3[,,3]),
+#                   species = factor(c(rep("s",50), rep("c", 50), rep("v", 50))))
+# ir.nn2 <- nnet(species ~ ., data = ird, subset = samp, size = 2, rang = 0.1,
+#                decay = 5e-4, maxit = 200)
+# G <- predict(ir.nn2, ird[-samp,], type = "class")
