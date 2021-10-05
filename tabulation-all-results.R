@@ -3,22 +3,18 @@ library(dplyr)
 library(stringr)
 library(readxl)
 
-path <- "D:/My Documents/UCR/"
+# path <- "D:/My Documents/UCR/"
+
+path <- "C:/Users/JYOTISHKA/Dropbox/Robust_Energy_based_Classifier/Gof_Project/Results/Real/UCR/"
 files <- list.files(path = path)
 files.df <- as.data.frame(files, "filenames" = files)
-# filenames <- as.character(files)
 
-## all.UCR <- UCR_datasets <- read_excel("~/UCR-datasets.xlsx", col_names = FALSE)
-
+all.UCR <- UCR_datasets <- read_excel("~/UCR-datasets.xlsx", col_names = FALSE)
 colnames(all.UCR) <- c('datasets','length')
 N <- nrow(all.UCR)
 
 M.orig <- read.csv("D:/My Documents/Real Data Analysis_ Three Databases - UCR.csv")
 M <- M.orig[ ,-c(2:8)]
-M[27,1] <- "GunPoint1"
-
-# all.UCR$datasets[52] <- "Gunpoint1"
-# all.UCR$datasets[52] <- "Gunpoint1"
 
 df.table <- as.data.frame(matrix(NA, nrow = 2*N, ncol = 15))
 colnames(df.table) <- H <- c("Dataset", "Length", 
@@ -75,9 +71,8 @@ for (k in 1:N) {
             popular.se <- rep(NA, 7)
          }
       }
-      else {
-         bin <- str_detect(M[,1], fixed(all.UCR$datasets[k], 
-                                 ignore_case = TRUE))
+      else {bin <- str_detect(M[,1], fixed(all.UCR$datasets[k], 
+                                           ignore_case = TRUE))
          if (sum(bin) > 0) {
             pos <- which(bin)
             popular.mean <- M[pos,-1]
@@ -106,8 +101,9 @@ for (k in 1:N) {
       
       df.table[(2*k - 1), ] <- c(all.UCR$datasets[k], all.UCR$length[k],
                                  delta.mean, popular.mean, savg.mean, svmrbf.mean)
-      df.table[(2*k), ] <- c(" ", all.UCR$length[k],
-                             delta.se, popular.se, savg.se, svmrbf.se)
+      # df.table[(2*k), ] <- c(" ", all.UCR$length[k],
+      #                        delta.se, popular.se, savg.se, svmrbf.se)
+      df.table[(2*k), ] <- c(rep(NA, 15))
    }
    else {df.table[(2*k - 1), ] <- c(all.UCR$datasets[k], all.UCR$length[k],
                                     rep(NA, 13))
@@ -129,10 +125,10 @@ pref.mat <- matrix(0, N, 10)
 B <- H[c(3:4,6:7,9:14)]
 
 for (i in 1:N) {
-   if(is.na(df.table[(2*i-1),7]) == FALSE){
+   if(is.na(sum(df.table[(2*i-1),c(3:4,6:7,9:14)])) == FALSE){
      R <- df.table[(2*i-1),c(3:4,6:7,9:14)] %>%
         as.numeric() %>%
-        rank(ties.method = "random")
+        rank(ties.method = "first")
 
      v <- c()
      for(j in 1:10){
@@ -145,7 +141,7 @@ for (i in 1:N) {
 }
 
 pref.mat <- cbind(all.UCR$datasets, pref.mat)
-pref.mat.no.NA <- na.omit(pref.mat)
+pref.mat.no.NA <- na.omit(pref.mat) %>% as.data.frame()
 
 
 
