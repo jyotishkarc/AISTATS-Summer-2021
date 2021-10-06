@@ -98,17 +98,23 @@ for (k in 1:N) {
       }
       else {svmrbf.value <- svmrbf.se <- NA}
       
-      
-      df.table[(2*k - 1), ] <- c(all.UCR$datasets[k], all.UCR$length[k],
+      df.table[k, ] <- c(all.UCR$datasets[k], all.UCR$length[k],
                                  delta.mean, popular.mean, savg.mean, svmrbf.mean)
+      
+      # df.table[(2*k - 1), ] <- c(all.UCR$datasets[k], all.UCR$length[k],
+      #                            delta.mean, popular.mean, savg.mean, svmrbf.mean)
       # df.table[(2*k), ] <- c(" ", all.UCR$length[k],
       #                        delta.se, popular.se, savg.se, svmrbf.se)
-      df.table[(2*k), ] <- c(rep(NA, 15))
+      
+      #df.table[(2*k), ] <- c(rep(NA, 15))
    }
-   else {df.table[(2*k - 1), ] <- c(all.UCR$datasets[k], all.UCR$length[k],
-                                    rep(NA, 13))
-         df.table[(2*k), ] <- c(" ", all.UCR$length[k],
-                                rep(NA, 13))
+   else {
+      df.table[k, ] <- c(all.UCR$datasets[k], all.UCR$length[k],
+                                 rep(NA, 13))
+      # df.table[(2*k - 1), ] <- c(all.UCR$datasets[k], all.UCR$length[k],
+      #                               rep(NA, 13))
+      # df.table[(2*k), ] <- c(" ", all.UCR$length[k],
+      #                           rep(NA, 13))
    }
 }
 
@@ -120,29 +126,30 @@ for(j in 2:14){
    df.table[,j] <- round(as.numeric(df.table[,j]), 5)
 }
 
+View(df.table)
 
-pref.mat <- matrix(0, N, 10)
-B <- H[c(3:4,6:7,9:14)]
-
-for (i in 1:N) {
-   if(is.na(sum(df.table[(2*i-1),c(3:4,6:7,9:14)])) == FALSE){
-     R <- df.table[(2*i-1),c(3:4,6:7,9:14)] %>%
-        as.numeric() %>%
-        rank(ties.method = "first")
-
-     v <- c()
-     for(j in 1:10){
-        v[j] <- B[which(R == j)]
-     }
-
-     pref.mat[i,] <- v
-   }
-   else pref.mat[i,] <- rep(NA,10)
-}
-
-pref.mat <- cbind(all.UCR$datasets, pref.mat)
-pref.mat.no.NA <- na.omit(pref.mat) %>% as.data.frame()
-
+# 
+# pref.mat <- matrix(0, N, 10)
+# B <- H[c(3:4,6:7,9:14)]
+# 
+# for (i in 1:N) {
+#    if(is.na(sum(df.table[(2*i-1),c(3:4,6:7,9:14)])) == FALSE){
+#      R <- df.table[(2*i-1),c(3:4,6:7,9:14)] %>%
+#         as.numeric() %>%
+#         rank(ties.method = "first")
+# 
+#      v <- c()
+#      for(j in 1:10){
+#         v[j] <- B[which(R == j)]
+#      }
+# 
+#      pref.mat[i,] <- v
+#    }
+#    else pref.mat[i,] <- rep(NA,10)
+# }
+# 
+# pref.mat <- cbind(all.UCR$datasets, pref.mat)
+# pref.mat.no.NA <- na.omit(pref.mat) %>% as.data.frame()
 
 
 
