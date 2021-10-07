@@ -106,23 +106,9 @@ for (k in 1:length(d.seq)) {
    
    
         ################################ SVM RBF
-   
-        multi <- 10
-        h <- (1 : (2*multi)) * (1 / (multi*d))
-        e_SVM_rbf <- rep(0,length(h))
-   
-        for(j in 1:(2*multi)){
-           fit4 <- svm(x = train.sample, y = as.factor(train.label),
-                       kernel = "radial",
-                       gamma = h[j])
-   
-           e_SVM_rbf[j] <- mean(fit4$fitted != train.label)
-        }
-   
-        h0 = h[which.min(e_SVM_rbf)]
-   
+        
         fit4 <- svm(x = train.sample, y = as.factor(train.label),
-                    kernel = "radial", gamma = h0)
+                    kernel = "radial")
    
         p_1 <- as.numeric(predict(fit4, test.sample))
    
