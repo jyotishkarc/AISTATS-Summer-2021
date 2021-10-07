@@ -24,13 +24,6 @@ for(k in 1:length(miss)){
 source('~/R/R Codes/Classification of HDLSS Data (Summer, 2021)/HDLSS-Summer-2021/dataset-partitioning-JRC.R')
 
 
-# for(k in 1:length(miss)){
-#    data.miss[[k]] <- data.partition.multi(data.miss.train[[k]], 
-#                                           data.miss.test[[k]])
-# }
-
-
-
 
 
 
