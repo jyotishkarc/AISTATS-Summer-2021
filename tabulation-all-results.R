@@ -3,25 +3,31 @@ library(dplyr)
 library(stringr)
 library(readxl)
 
-# path <- "D:/My Documents/UCR/"
+# path <- "E:/Jyotishka/Data/UCR-Results/UCR/"
 
 path <- "C:/Users/JYOTISHKA/Dropbox/Robust_Energy_based_Classifier/Gof_Project/Results/Real/UCR/"
+
 files <- list.files(path = path)
 files.df <- as.data.frame(files, "filenames" = files)
 
-all.UCR <- UCR_datasets <- read_excel("~/UCR-datasets.xlsx", col_names = FALSE)
+# all.UCR <- read_excel("E:/Jyotishka/UCR-datasets.xlsx", col_names = FALSE)
+all.UCR <- read_excel("~/UCR-datasets.xlsx", col_names = FALSE)
+
 colnames(all.UCR) <- c('datasets','length')
 N <- nrow(all.UCR)
 
 M.orig <- read.csv("D:/My Documents/Real Data Analysis_ Three Databases - UCR.csv")
+# M.orig <- read.csv("E:/Jyotishka/Real Data Analysis_ Three Databases - UCR.csv")
+
 M <- M.orig[ ,-c(2:8)]
 
-df.table <- as.data.frame(matrix(NA, nrow = 2*N, ncol = 15))
+df.table <- as.data.frame(matrix(NA, nrow = N, ncol = 15))
+
 colnames(df.table) <- H <- c("Dataset", "Length", 
                              "delta0.sin","delta0.sin.comp",
                              "delta2.sin", "delta2.sin.comp", 
-                             "GLMNET", "RF", "RP",
-                             "SVMlin", "SVMRBF", "Nnet", "1NN", "SAVG","SVMRBF.new")
+                             "GLMNET", "RF", "RP","SVMlin", "SVMRBF",
+                             "Nnet", "1NN", "SAVG","SVMRBF.new")
 
 mV.which <- which(str_detect(files, "majorityVoting"))
 proj.which <- which(str_detect(files, "projavg"))
@@ -100,21 +106,10 @@ for (k in 1:N) {
       
       df.table[k, ] <- c(all.UCR$datasets[k], all.UCR$length[k],
                                  delta.mean, popular.mean, savg.mean, svmrbf.mean)
-      
-      # df.table[(2*k - 1), ] <- c(all.UCR$datasets[k], all.UCR$length[k],
-      #                            delta.mean, popular.mean, savg.mean, svmrbf.mean)
-      # df.table[(2*k), ] <- c(" ", all.UCR$length[k],
-      #                        delta.se, popular.se, savg.se, svmrbf.se)
-      
-      #df.table[(2*k), ] <- c(rep(NA, 15))
    }
    else {
       df.table[k, ] <- c(all.UCR$datasets[k], all.UCR$length[k],
                                  rep(NA, 13))
-      # df.table[(2*k - 1), ] <- c(all.UCR$datasets[k], all.UCR$length[k],
-      #                               rep(NA, 13))
-      # df.table[(2*k), ] <- c(" ", all.UCR$length[k],
-      #                           rep(NA, 13))
    }
 }
 
@@ -128,28 +123,28 @@ for(j in 2:14){
 
 View(df.table)
 
-# 
-# pref.mat <- matrix(0, N, 10)
-# B <- H[c(3:4,6:7,9:14)]
-# 
-# for (i in 1:N) {
-#    if(is.na(sum(df.table[(2*i-1),c(3:4,6:7,9:14)])) == FALSE){
-#      R <- df.table[(2*i-1),c(3:4,6:7,9:14)] %>%
-#         as.numeric() %>%
-#         rank(ties.method = "first")
-# 
-#      v <- c()
-#      for(j in 1:10){
-#         v[j] <- B[which(R == j)]
-#      }
-# 
-#      pref.mat[i,] <- v
-#    }
-#    else pref.mat[i,] <- rep(NA,10)
-# }
-# 
-# pref.mat <- cbind(all.UCR$datasets, pref.mat)
-# pref.mat.no.NA <- na.omit(pref.mat) %>% as.data.frame()
 
+pref.mat <- matrix(0, N, 10)
+B <- H[c(3:4,6:7,9:14)]
 
+for (i in 1:N) {
+   if(is.na(sum(df.table[i,c(3:4,6:7,9:14)])) == FALSE){
+     R <- df.table[i,c(3:4,6:7,9:14)] %>%
+        as.numeric() %>%
+        rank(ties.method = "first")
+
+     v <- c()
+     for(j in 1:10){
+        v[j] <- B[which(R == j)]
+     }
+
+     pref.mat[i,] <- v
+   }
+   else pref.mat[i,] <- rep(NA,10)
+}
+
+pref.mat <- cbind(all.UCR$datasets, pref.mat)
+pref.mat.no.NA <- pref.mat %>% na.omit() %>% as.data.frame()
+
+View(pref.mat.no.NA)
 
