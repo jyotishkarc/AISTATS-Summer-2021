@@ -240,7 +240,7 @@ for (k in 1:length(d.seq)) {
                        e_nnet_log_1, e_nnet_log_3, e_nnet_log_5, e_nnet_log_10,
                        e_nnet_ReLU_1, e_nnet_ReLU_3, e_nnet_ReLU_5, e_nnet_ReLU_10,
                        e_onn
-              ))
+                       ))
            }
    
          end.time <- proc.time()[3]- start.time
