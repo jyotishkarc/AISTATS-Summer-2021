@@ -1,4 +1,6 @@
 
+tic()
+
 miss <- c()
 
 for (k in 1:N) {
@@ -20,6 +22,8 @@ for(k in 1:length(miss)){
    data.miss.test[[k]] <- paste0(path.ucr,"/",miss[k],"/",miss[k],"_",
                                  "TEST.tsv") %>% read.csv(header = F, sep = "\t")
 }
+
+toc()
 
 source('~/R/R Codes/Classification of HDLSS Data (Summer, 2021)/HDLSS-Summer-2021/dataset-partitioning-JRC.R')
 
