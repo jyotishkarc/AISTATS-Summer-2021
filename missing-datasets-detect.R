@@ -1,5 +1,5 @@
 
-tic()
+#tic()
 
 miss <- c()
 
@@ -23,9 +23,9 @@ for(k in 1:length(miss)){
                                  "TEST.tsv") %>% read.csv(header = F, sep = "\t")
 }
 
-toc()
+#toc()
 
-source('~/R/R Codes/Classification of HDLSS Data (Summer, 2021)/HDLSS-Summer-2021/dataset-partitioning-JRC.R')
+# source('~/R/R Codes/Classification of HDLSS Data (Summer, 2021)/HDLSS-Summer-2021/dataset-partitioning-JRC.R')
 
 
 
