@@ -32,6 +32,8 @@ colnames(df.table) <- H <- c("Dataset", "Length",
 mV.which <- which(str_detect(files, "majorityVoting"))
 proj.which <- which(str_detect(files, "projavg"))
 
+Z <- list()
+
 for (k in 1:N) {
    print(k)
    
