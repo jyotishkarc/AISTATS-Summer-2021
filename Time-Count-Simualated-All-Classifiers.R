@@ -9,10 +9,11 @@ library(class)             #### One Nearest Neighbour
 n <- 20
 m <- 20
 
-# d.seq <- c(50,100,250,500,1000)
-d.seq <- c(50,1000)
+d.seq <- c(50,100,250,500,1000)
 
-time.matrix <- matrix(0, nrow = length(d.seq), ncol = 13)
+# d.seq <- c(50,1000)
+
+time.matrix <- matrix(0, nrow = length(d.seq), ncol = 16)
 
 for (k in 1:length(d.seq)) {
    
@@ -39,6 +40,413 @@ for (k in 1:length(d.seq)) {
    train.label <- c(rep(1,n), rep(2,m))
    
    print("COMPLETED : Data Generation")
+   
+   no.of.classes <- 2
+   data.training.list.unlab <- list(X,Y)
+   
+   ################################ Delta0 sin (DELTA 0)
+   
+   system.time({
+      Tjj <- lapply(data.training.list.unlab, function(df){
+         
+         tsin <- dissim.sin(train.set = as.matrix(df), 
+                            no.cores = no.cores)
+         # tsin.comp <- dissim.sin.comp(train.set = as.matrix(df), 
+         #                              no.cores = no.cores)
+         
+         # return(c(sum(tsin), sum(tsin.comp))/(nrow(df) * (nrow(df) - 1)))
+         return(sum(tsin)/(nrow(df)^2))
+      })
+      
+      # print(Tjj)
+      
+      T.sin <- # T.sin.comp <-
+         matrix(0, no.of.classes, no.of.classes)
+      
+      for (i in 1 : no.of.classes) {
+         for (j in 1:i) {
+            mat1 <- data.training.list.unlab[[i]]
+            mat2 <- data.training.list.unlab[[j]]
+            # print(dim(mat1))
+            # print(dim(mat2))
+            y1 <- dissim.sin(rbind(mat1,mat2), no.cores = no.cores)
+            y1 <- as.matrix(y1)
+            y1 <- y1[((nrow(mat1) + 1):(nrow(mat1) + nrow(mat2))), (1 : nrow(mat1))]
+            T.sin[j,i] <- T.sin[i,j] <- sum(y1)/(nrow(mat1) * nrow(mat2))
+            
+            # y2 <- dissim.sin.comp(rbind(mat1,mat2), no.cores = no.cores)
+            # y2 <- as.matrix(y2)
+            # y2 <- y2[((nrow(mat1)+1):(nrow(mat1)+nrow(mat2))), 1:nrow(mat1)]
+            # T.sin.comp[i,j] <- T.sin.comp[j,i] <- sum(y2)/(nrow(mat1) * nrow(mat2))
+         }
+         
+         T.sin[i,i] <- # T.sin.comp[i,i] <- 
+            0
+      }
+      
+      # print(T.sin)
+      # print(T.sin.comp)
+      
+      Tjj <- Tjj %>% do.call('rbind', .) %>% as.data.frame()
+      #colnames(Tjj) <- c('sin','sin.comp')
+      # print(Tjj)
+      
+      lbl.ensmbl <- t(apply(t(test.sample) , 1, function(Z){
+         Z <- as.numeric(Z)
+         
+         TjZ.tmp <- lapply(data.training.list.unlab, function(df){
+            
+            return(colMeans(as.matrix(apply(df,1,function(vec){
+               vec <- as.numeric(vec)
+               
+               u1 <- 1 + (t(vec) %*% Z)
+               u2 <- 1 + (t(vec) %*% vec)
+               u3 <- 1 + (t(Z) %*% Z)
+               
+               r1 <- asin(u1/sqrt(u2 * u3)) #sine
+               return(r1)
+               
+               # v1 <- 1 + (vec * Z)
+               # v2 <- 1 + (vec * vec)
+               # v3 <- 1 + (Z * Z)
+               # 
+               # r2 <- mean(asin(v1/sqrt(v2*v3))) #sine component-wise
+               # 
+               # return(c(r1,r2))
+               
+            }))))
+         })
+         
+         TjZ <- do.call('rbind', TjZ.tmp)
+         
+         print("Hello")
+         
+         LjZ <- Tjj/2 - TjZ[,1]
+         # LjZ <- Tjj$sin/2 - TjZ[,1]
+         
+         # LjZ <- cbind((Tjj$sin/2 - TjZ[,1]), (Tjj$sin.comp/2 - TjZ[,2]))
+         # print(LjZ)
+         
+         indicator_Z.sin <- ind.Z.sin <- 
+            # indicator_Z.sin.comp <- ind.Z.sin.comp <- 
+               matrix(0, no.of.classes, no.of.classes)
+         
+         Tjj <- Tjj[,1]
+         
+         for (i in 1 : no.of.classes) {
+            for (j in 1:i) {
+               indicator_Z.sin[i,j] <-
+                  (Tjj[i] + Tjj[j] - 2 * T.sin[i,j]) * 
+                  (LjZ[j,1] - LjZ[i,1]) - (Tjj[i] - Tjj[j]) * 
+                  (LjZ[i,1] + LjZ[j,1] + T.sin[i,j])
+               
+               if(indicator_Z.sin[i,j] > 0){
+                  ind.Z.sin[i,j] <- ind.Z.sin[j,i] <- i}
+               if(indicator_Z.sin[i,j] <= 0){
+                  ind.Z.sin[i,j] <- ind.Z.sin[j,i] <- j}
+               
+               # indicator_Z.sin.comp[i,j] <-
+               #    (Tjj$sin.comp[i] + Tjj$sin.comp[j] - 2 * T.sin.comp[i,j]) * 
+               #    (LjZ[j,2] - LjZ[i,2]) - (Tjj$sin.comp[i] - Tjj$sin.comp[j]) *
+               #    (LjZ[i,2] + LjZ[j,2] + T.sin.comp[i,j])
+               # 
+               # if(indicator_Z.sin.comp[i,j] > 0){
+               #    ind.Z.sin.comp[i,j] <- ind.Z.sin.comp[j,i] <- i}
+               # if(indicator_Z.sin.comp[i,j] <= 0){
+               #    ind.Z.sin.comp[i,j] <- ind.Z.sin.comp[j,i] <- j}
+            }
+         }
+         
+         # rm(LjZ, TjZ.tmp, T.sin, T.sin.comp, 
+         #    indicator_Z.sin, indicator_Z.sin.comp)
+         
+         ind.Z.sin <- as.numeric(ind.Z.sin)
+         # ind.Z.sin.comp <- as.numeric(ind.Z.sin.comp)
+         
+         # print(ind.Z.sin)
+         # print(ind.Z.sin.comp)
+         
+         return(which.min(Tjj/2 - TjZ[,1]))
+                  # which.min(Tjj$sin.comp/2 - TjZ[,2]), 
+                  # mode.data(ind.Z.sin),
+                  # mode.data(ind.Z.sin.comp)))
+   }))
+   
+      out1 <- apply(lbl.ensmbl, 2, function(vec) {return(mean(vec != test.label))})
+   }) -> time.delta0.sin
+   
+   print("DONE : Delta_0 sin")
+   
+   
+   
+   ################################ Delta0 sin.comp (DELTA 1)
+   
+   system.time({
+      Tjj <- lapply(data.training.list.unlab, function(df){
+         
+         # tsin <- dissim.sin(train.set = as.matrix(df), 
+         #                    no.cores = no.cores)
+         tsin.comp <- dissim.sin.comp(train.set = as.matrix(df),
+                                      no.cores = no.cores)
+         
+         return(sum(tsin.comp)/(nrow(df)^2))
+      })
+      
+      # print(Tjj)
+      
+      # T.sin <- 
+      T.sin.comp <- matrix(0, no.of.classes, no.of.classes)
+      
+      for (i in 1 : no.of.classes) {
+         for (j in 1:i) {
+            mat1 <- data.training.list.unlab[[i]]
+            mat2 <- data.training.list.unlab[[j]]
+            
+            # y1 <- dissim.sin(rbind(mat1,mat2), no.cores = no.cores)
+            # y1 <- as.matrix(y1)
+            # y1 <- y1[((nrow(mat1) + 1):(nrow(mat1) + nrow(mat2))), (1 : nrow(mat1))]
+            # T.sin[j,i] <- T.sin[i,j] <- sum(y1)/(nrow(mat1) * nrow(mat2))
+            
+            y2 <- dissim.sin.comp(rbind(mat1,mat2), no.cores = no.cores) %>% as.matrix()
+            # y2 <- as.matrix(y2)
+            y2 <- y2[((nrow(mat1)+1):(nrow(mat1)+nrow(mat2))), 1:nrow(mat1)]
+            T.sin.comp[i,j] <- T.sin.comp[j,i] <- sum(y2)/(nrow(mat1) * nrow(mat2))
+         }
+         
+         # T.sin[i,i] <- 
+         T.sin.comp[i,i] <- 0
+      }
+      
+      # print(T.sin)
+      # print(T.sin.comp)
+      
+      Tjj <- Tjj %>% do.call('rbind', .) %>% as.data.frame()
+      #colnames(Tjj) <- c('sin','sin.comp')
+      # print(Tjj)
+      
+      lbl.ensmbl <- t(apply(t(test.sample) , 1, function(Z){
+         Z <- as.numeric(Z)
+         
+         TjZ.tmp <- lapply(data.training.list.unlab, function(df){
+            
+            return(colMeans(as.matrix(apply(df,1,function(vec){
+               vec <- as.numeric(vec)
+               
+               # u1 <- 1 + (t(vec) %*% Z)
+               # u2 <- 1 + (t(vec) %*% vec)
+               # u3 <- 1 + (t(Z) %*% Z)
+               # 
+               # r1 <- asin(u1/sqrt(u2 * u3)) #sine
+               # return(r1)
+               
+               v1 <- 1 + (vec * Z)
+               v2 <- 1 + (vec * vec)
+               v3 <- 1 + (Z * Z)
+
+               r2 <- mean(asin(v1/sqrt(v2*v3))) #sine component-wise
+               return(r2)
+
+               # return(c(r1,r2))
+               
+            }))))
+         })
+         
+         TjZ <- do.call('rbind', TjZ.tmp)
+         
+         print("Hello")
+         
+         LjZ <- Tjj/2 - TjZ[,1]
+         # LjZ <- Tjj$sin/2 - TjZ[,1]
+         
+         # LjZ <- cbind((Tjj$sin/2 - TjZ[,1]), (Tjj$sin.comp/2 - TjZ[,2]))
+         # print(LjZ)
+         
+         # indicator_Z.sin <- ind.Z.sin <- 
+         indicator_Z.sin.comp <- ind.Z.sin.comp <-
+            matrix(0, no.of.classes, no.of.classes)
+         
+         Tjj <- Tjj[,1]
+         
+         for (i in 1 : no.of.classes) {
+            for (j in 1:i) {
+               # indicator_Z.sin[i,j] <-
+               #    (Tjj[i] + Tjj[j] - 2 * T.sin[i,j]) * 
+               #    (LjZ[j,1] - LjZ[i,1]) - (Tjj[i] - Tjj[j]) * 
+               #    (LjZ[i,1] + LjZ[j,1] + T.sin[i,j])
+               # 
+               # if(indicator_Z.sin[i,j] > 0){
+               #    ind.Z.sin[i,j] <- ind.Z.sin[j,i] <- i}
+               # if(indicator_Z.sin[i,j] <= 0){
+               #    ind.Z.sin[i,j] <- ind.Z.sin[j,i] <- j}
+               
+               indicator_Z.sin.comp[i,j] <-
+                  (Tjj[i] + Tjj[j] - 2 * T.sin.comp[i,j]) *
+                  (LjZ[j,1] - LjZ[i,1]) - (Tjj[i] - Tjj[j]) *
+                  (LjZ[i,1] + LjZ[j,1] + T.sin.comp[i,j])
+
+               if(indicator_Z.sin.comp[i,j] > 0){
+                  ind.Z.sin.comp[i,j] <- ind.Z.sin.comp[j,i] <- i}
+               if(indicator_Z.sin.comp[i,j] <= 0){
+                  ind.Z.sin.comp[i,j] <- ind.Z.sin.comp[j,i] <- j}
+            }
+         }
+         
+         # rm(LjZ, TjZ.tmp, T.sin, T.sin.comp, 
+         #    indicator_Z.sin, indicator_Z.sin.comp)
+         
+         # ind.Z.sin <- as.numeric(ind.Z.sin)
+         ind.Z.sin.comp <- as.numeric(ind.Z.sin.comp)
+         
+         # print(ind.Z.sin)
+         # print(ind.Z.sin.comp)
+         
+         return(# which.min(Tjj/2 - TjZ[,1]))
+         which.min(Tjj/2 - TjZ[,1]))
+         # mode.data(ind.Z.sin),
+         # mode.data(ind.Z.sin.comp)))
+      }))
+      
+      out2 <- apply(lbl.ensmbl, 2, function(vec) {return(mean(vec != test.label))})
+      }) -> time.delta0.sin.comp
+   
+   print("DONE : Delta_0 sin.comp")
+   
+   
+   ################################ Delta_2 sin.comp (DELTA 2)
+   
+   system.time({
+      Tjj <- lapply(data.training.list.unlab, function(df){
+         
+         # tsin <- dissim.sin(train.set = as.matrix(df), 
+         #                    no.cores = no.cores)
+         tsin.comp <- dissim.sin.comp(train.set = as.matrix(df),
+                                      no.cores = no.cores)
+         
+         return(sum(tsin.comp)/(nrow(df)^2))
+      })
+      
+      # print(Tjj)
+      
+      # T.sin <- 
+      T.sin.comp <- matrix(0, no.of.classes, no.of.classes)
+      
+      for (i in 1 : no.of.classes) {
+         for (j in 1:i) {
+            mat1 <- data.training.list.unlab[[i]]
+            mat2 <- data.training.list.unlab[[j]]
+            
+            # y1 <- dissim.sin(rbind(mat1,mat2), no.cores = no.cores)
+            # y1 <- as.matrix(y1)
+            # y1 <- y1[((nrow(mat1) + 1):(nrow(mat1) + nrow(mat2))), (1 : nrow(mat1))]
+            # T.sin[j,i] <- T.sin[i,j] <- sum(y1)/(nrow(mat1) * nrow(mat2))
+            
+            y2 <- dissim.sin.comp(rbind(mat1,mat2), no.cores = no.cores) %>% as.matrix()
+            # y2 <- as.matrix(y2)
+            y2 <- y2[((nrow(mat1)+1):(nrow(mat1)+nrow(mat2))), 1:nrow(mat1)]
+            T.sin.comp[i,j] <- T.sin.comp[j,i] <- sum(y2)/(nrow(mat1) * nrow(mat2))
+         }
+         
+         # T.sin[i,i] <- 
+         T.sin.comp[i,i] <- 0
+      }
+      
+      # print(T.sin)
+      # print(T.sin.comp)
+      
+      Tjj <- Tjj %>% do.call('rbind', .) %>% as.data.frame()
+      #colnames(Tjj) <- c('sin','sin.comp')
+      # print(Tjj)
+      
+      lbl.ensmbl <- t(apply(t(test.sample) , 1, function(Z){
+         Z <- as.numeric(Z)
+         
+         TjZ.tmp <- lapply(data.training.list.unlab, function(df){
+            
+            return(colMeans(as.matrix(apply(df,1,function(vec){
+               vec <- as.numeric(vec)
+               
+               # u1 <- 1 + (t(vec) %*% Z)
+               # u2 <- 1 + (t(vec) %*% vec)
+               # u3 <- 1 + (t(Z) %*% Z)
+               # 
+               # r1 <- asin(u1/sqrt(u2 * u3)) #sine
+               # return(r1)
+               
+               v1 <- 1 + (vec * Z)
+               v2 <- 1 + (vec * vec)
+               v3 <- 1 + (Z * Z)
+               
+               r2 <- mean(asin(v1/sqrt(v2*v3))) #sine component-wise
+               return(r2)
+               
+               # return(c(r1,r2))
+               
+            }))))
+         })
+         
+         TjZ <- do.call('rbind', TjZ.tmp)
+         
+         print("Hello")
+         
+         LjZ <- Tjj/2 - TjZ[,1]
+         # LjZ <- Tjj$sin/2 - TjZ[,1]
+         
+         # LjZ <- cbind((Tjj$sin/2 - TjZ[,1]), (Tjj$sin.comp/2 - TjZ[,2]))
+         # print(LjZ)
+         
+         # indicator_Z.sin <- ind.Z.sin <- 
+         indicator_Z.sin.comp <- ind.Z.sin.comp <-
+            matrix(0, no.of.classes, no.of.classes)
+         
+         Tjj <- Tjj[,1]
+         
+         for (i in 1 : no.of.classes) {
+            for (j in 1:i) {
+               # indicator_Z.sin[i,j] <-
+               #    (Tjj[i] + Tjj[j] - 2 * T.sin[i,j]) * 
+               #    (LjZ[j,1] - LjZ[i,1]) - (Tjj[i] - Tjj[j]) * 
+               #    (LjZ[i,1] + LjZ[j,1] + T.sin[i,j])
+               # 
+               # if(indicator_Z.sin[i,j] > 0){
+               #    ind.Z.sin[i,j] <- ind.Z.sin[j,i] <- i}
+               # if(indicator_Z.sin[i,j] <= 0){
+               #    ind.Z.sin[i,j] <- ind.Z.sin[j,i] <- j}
+               
+               indicator_Z.sin.comp[i,j] <-
+                  (Tjj[i] + Tjj[j] - 2 * T.sin.comp[i,j]) *
+                  (LjZ[j,1] - LjZ[i,1]) - (Tjj[i] - Tjj[j]) *
+                  (LjZ[i,1] + LjZ[j,1] + T.sin.comp[i,j])
+               
+               if(indicator_Z.sin.comp[i,j] > 0){
+                  ind.Z.sin.comp[i,j] <- ind.Z.sin.comp[j,i] <- i}
+               if(indicator_Z.sin.comp[i,j] <= 0){
+                  ind.Z.sin.comp[i,j] <- ind.Z.sin.comp[j,i] <- j}
+            }
+         }
+         
+         # rm(LjZ, TjZ.tmp, T.sin, T.sin.comp, 
+         #    indicator_Z.sin, indicator_Z.sin.comp)
+         
+         # ind.Z.sin <- as.numeric(ind.Z.sin)
+         ind.Z.sin.comp <- as.numeric(ind.Z.sin.comp)
+         
+         # print(ind.Z.sin)
+         # print(ind.Z.sin.comp)
+         
+         ux <- unique(ind.Z.sin.comp)
+         return(ux[which.max(tabulate(match(ind.Z.sin.comp, ux)))])
+         
+         # return(which.min(Tjj/2 - TjZ[,1]))
+         #    which.min(Tjj/2 - TjZ[,1]))
+         # mode.data(ind.Z.sin),
+         # mode.data(ind.Z.sin.comp))
+      }))
+      
+      out3 <- apply(lbl.ensmbl, 2, function(vec) {return(mean(vec != test.label))})
+      }) -> time.delta2.sin.comp
+   
+   print("DONE : Delta_2 sin.comp")
+   
    
    ################################ GLMNET
    
@@ -212,7 +620,10 @@ for (k in 1:length(d.seq)) {
    
    ################################
    
-   time.matrix[k, ] <- c(time.GLMNET[3],
+   time.matrix[k, ] <- c(time.delta0.sin[3], 
+                         time.delta0.sin.comp[3], 
+                         time.delta2.sin.comp[3],
+                         time.GLMNET[3],
                          time.ONN[3],
                          time.NN.Rand[3],
                          time.NNet.log.1[3], time.NNet.log.3[3],
@@ -225,7 +636,8 @@ for (k in 1:length(d.seq)) {
 }
 
 time.matrix <- time.matrix %>% as.data.frame()
-colnames(time.matrix) <- c('GLMNET',
+colnames(time.matrix) <- c('Delta-0','Delta-1','Delta-2',
+                           'GLMNET',
                            'ONN',
                            'NNRAND',
                            'NN-lg-1','NN-lg-3','NN-lg-5','NN-lg-10',
