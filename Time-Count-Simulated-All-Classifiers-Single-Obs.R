@@ -636,6 +636,8 @@ for (k in 1:length(d.seq)) {
 }
 
 time.matrix <- time.matrix %>% as.data.frame()
+
+rownames(time.matrix) <- as.character(d.seq)
 colnames(time.matrix) <- c('Delta-0','Delta-1','Delta-2',
                            'GLMNET',
                            'ONN',
@@ -645,33 +647,7 @@ colnames(time.matrix) <- c('Delta-0','Delta-1','Delta-2',
                            'SVMLIN',
                            'SVMRBF')
 
-rownames(time.matrix) <- as.character(d.seq)
+# library(writexl)
 
-
-# end.time <- proc.time()[3]- start.time
-# print(end.time)
-
-# colnames(result) <- c('BYS',
-#                       'GLMNET',
-#                       'RF1','RF2','RF3','RF4',
-#                       'NNRAND',
-#                       'SVMLIN',
-#                       'SVMRBF',
-#                       'NN-lg-1','NN-lg-3','NN-lg-5','NN-lg-10',
-#                       'NN-R-1','NN-R-3','NN-R-5','NN-R-10',
-#                       'ONN'
-# )
-# 
-# 
-# res.list.C01.vs.C02 <- list("d=5" = res.list[[1]],
-#                             "d=10" = res.list[[2]],
-#                             "d=25" = res.list[[3]],
-#                             "d=50" = res.list[[4]],
-#                             "d=100" = res.list[[5]],
-#                             "d=250" = res.list[[6]],
-#                             "d=500" = res.list[[7]],
-#                             "d=1000" = res.list[[8]])
-
-# writexl::write_xlsx(x = res.list.C01.vs.C02,
-#                     path = "E:\\Jyotishka\\Code\\Pop-C01-vs-C02-with-nn.xlsx")
-
+write_xlsx(cbind("Dimensions" = as.character(d.seq), time.matrix),
+      "C:\\Users\\JYOTISHKA\\Desktop\\Time-Matrix-All-Classifiers-Single-Observation.xlsx")
