@@ -35,7 +35,8 @@ for (k in 1:length(d.seq)) {
    result <- foreach(u = 1:iterations,
                      .combine = rbind,
                      .packages = c('glmnet','RandPro','e1071','randomForest',
-                                   'class','nnet','mvtnorm')) %dopar% {
+                                   'class','nnet','mvtnorm')) %dopar% 
+     {
         
         cov.X <- diag(c(rep(1, floor(d/2)), rep(0.5, d-floor(d/2))))
         cov.Y <- diag(c(rep(0.5, floor(d/2)), rep(1, d-floor(d/2))))
