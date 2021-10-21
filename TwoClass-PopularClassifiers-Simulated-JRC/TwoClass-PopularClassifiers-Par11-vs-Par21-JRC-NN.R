@@ -35,7 +35,8 @@ for (k in 1:length(d.seq)) {
    result <- foreach(u = 1:iterations,
                      .combine = rbind,
                      .packages = c('glmnet','RandPro','e1071','randomForest',
-                                   'class','nnet','EnvStats')) %dopar% {
+                                   'class','nnet','EnvStats')) %dopar% 
+     {
                                       
         set.seed(u)
         
