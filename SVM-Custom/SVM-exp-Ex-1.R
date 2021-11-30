@@ -40,8 +40,6 @@ for (k in 1:length(d.seq)) {
                      ncol = d,
                      byrow = TRUE)
          
-         set.seed(u)
-         
          Y <- matrix(rnorm((m + ms) * d, 1, sqrt(2)),
                      nrow = m + ms,
                      ncol = d,
@@ -102,19 +100,21 @@ for (k in 1:length(d.seq)) {
    
 }
 
-# res.df[iterations + 2, ] <- apply(res.df, 2, mean)
-# res.df[iterations + 3, ] <- apply(res.df, 2, sciplot::se)
+res.df <- rbind(res.df,
+                rep(NA, length(d.seq)),
+                apply(res.df, 2, mean), 
+                apply(res.df, 2, sciplot::se))
 
 
 res.df <- res.df %>% as.data.frame()
 colnames(res.df) <- as.character(d.seq)
 
-# writexl::write_xlsx(x = res.list.01.vs.C02,
-#                     path = "C:\\Users\\JYOTISHKA\\Desktop\\Pop-C01-vs-C02.xlsx")
+writexl::write_xlsx(x = res.df,
+                    path = "C:\\Users\\JYOTISHKA\\Desktop\\SVM-exp-Ex-1.xlsx")
 
 # writexl::write_xlsx(x = res.list.Ex.6,
 #                     path = "E:\\Jyotishka\\Code\\Pop-Ex-6-with-nn.xlsx")
 
-# stopCluster(cl)
-# gc()
+stopCluster(cl)
+gc()
 
