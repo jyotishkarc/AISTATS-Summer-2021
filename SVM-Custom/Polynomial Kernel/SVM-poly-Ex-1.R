@@ -33,7 +33,7 @@ for (k in 1:length(d.seq)) {
                      .packages = c('e1071','kernlab','magrittr')) %dopar% 
       {
          
-         set.seed(u)
+         # set.seed(u)
          
          X <- matrix(rnorm((n + ns) * d, 1, 1),
                      nrow = n + ns,
@@ -112,7 +112,7 @@ res.df <- res.df %>% as.data.frame()
 colnames(res.df) <- as.character(d.seq)
 
 writexl::write_xlsx(x = res.df,
-                    path = "C:\\Users\\JYOTISHKA\\Desktop\\SVM-poly-Ex-1.xlsx")
+                    path = "C:\\Users\\JYOTISHKA\\Desktop\\SVM-poly-Ex-1-1-2.xlsx")
 
 # writexl::write_xlsx(x = res.list.Ex.6,
 #                     path = "E:\\Jyotishka\\Code\\Pop-Ex-6-with-nn.xlsx")
