@@ -64,7 +64,7 @@ for (k in 1:length(d.seq)) {
          ################################ SVM Exponential Kernel
          
          kern.exp <- function(h) {
-            return(exp(-(h-2)^2))
+            return(exp(-(h-3)^2))
          }
          
          all.data <- rbind(train.sample, test.sample)

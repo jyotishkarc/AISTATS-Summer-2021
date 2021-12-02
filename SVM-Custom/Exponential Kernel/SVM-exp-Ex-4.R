@@ -58,7 +58,7 @@ for (k in 1:length(d.seq)) {
          ################################ SVM Exponential Kernel
          
          kern.exp <- function(h) {
-            return(exp(-(h-2)^2))
+            return(exp(-(h-3)^2))
          }
          
          all.data <- rbind(train.sample, test.sample)
@@ -109,8 +109,8 @@ res.df <- rbind(res.df,
 res.df <- res.df %>% as.data.frame()
 colnames(res.df) <- as.character(d.seq)
 
-# writexl::write_xlsx(x = res.df,
-#                     path = "C:\\Users\\JYOTISHKA\\Desktop\\SVM-exp-Ex-4.xlsx")
+writexl::write_xlsx(x = res.df,
+                    path = "C:\\Users\\JYOTISHKA\\Desktop\\SVM-exp-Ex-4.xlsx")
 
 # writexl::write_xlsx(x = res.list.Ex.6,
 #                     path = "E:\\Jyotishka\\Code\\Pop-Ex-6-with-nn.xlsx")

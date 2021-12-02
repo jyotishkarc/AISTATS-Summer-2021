@@ -16,8 +16,8 @@ m <- 20
 ns <- 100
 ms <- 100
 
-# d.seq <- c(5,10)
-d.seq <- c(5,10,25,50,100,250,500,1000)
+d.seq <- 1000
+# d.seq <- c(5,10,25,50,100,250,500,1000)
 
 res.df <- matrix(NA, nrow = iterations, ncol = length(d.seq))
 
@@ -33,7 +33,7 @@ for (k in 1:length(d.seq)) {
                      .packages = c('e1071','kernlab','magrittr')) %dopar% 
       {
          
-         set.seed(u)
+         # set.seed(u)
          
          X <- matrix(rnorm((n + ns) * d, 1, 1),
                      nrow = n + ns,
@@ -58,7 +58,8 @@ for (k in 1:length(d.seq)) {
          ################################ SVM Exponential Kernel
          
          kern.exp <- function(h) {
-            return(exp(-(h-2)^2))
+            a <- 200
+            return(exp(- a * (h-2)^2))
          }
          
          all.data <- rbind(train.sample, test.sample)
@@ -93,8 +94,9 @@ for (k in 1:length(d.seq)) {
          return(e_SVM_exp)
       }
    
-   res.df[,k] <- result
+   print(mean(result))
    
+   # res.df[,k] <- result
    end.time <- proc.time()[3]- start.time
    print(end.time)
    
@@ -110,7 +112,7 @@ res.df <- res.df %>% as.data.frame()
 colnames(res.df) <- as.character(d.seq)
 
 writexl::write_xlsx(x = res.df,
-                    path = "C:\\Users\\JYOTISHKA\\Desktop\\SVM-exp-Ex-1.xlsx")
+                    path = "C:\\Users\\JYOTISHKA\\Desktop\\SVM-exp-Ex-1-10.xlsx")
 
 # writexl::write_xlsx(x = res.list.Ex.6,
 #                     path = "E:\\Jyotishka\\Code\\Pop-Ex-6-with-nn.xlsx")
