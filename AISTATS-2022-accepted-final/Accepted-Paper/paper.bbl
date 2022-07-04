@@ -1,0 +1,146 @@
+\begin{thebibliography}{}
+
+\bibitem[Aggarwal et~al., 2001]{aggarwal2001surprising}
+Aggarwal, C.~C., Hinneburg, A., and Keim, D.~A. (2001).
+\newblock On the surprising behavior of distance metrics in high dimensional
+  space.
+\newblock In {\em International Conference on Database Theory}, pages 420--434.
+  Springer.
+
+\bibitem[Aoshima et~al., 2018]{ASSYZM18}
+Aoshima, M., Shen, D., Shen, H., Yata, K., Zhou, Y.-H., and Marron, J. (2018).
+\newblock A survey of high dimension low sample size asymptotics.
+\newblock {\em Australian \& New Zealand Journal of Statistics}, 60(1):4--19.
+
+\bibitem[Bishop, 1995]{bishop1995neural}
+Bishop, C.~M. (1995).
+\newblock {\em Neural Networks for Pattern Recognition}.
+\newblock Oxford University Press.
+
+\bibitem[Biswas and Ghosh, 2014]{biswas2014nonparametric}
+Biswas, M. and Ghosh, A.~K. (2014).
+\newblock A nonparametric two-sample test applicable to high dimensional data.
+\newblock {\em Journal of Multivariate Analysis}, 123:160--171.
+
+\bibitem[Bradley, 2005]{bradley2005basic}
+Bradley, R.~C. (2005).
+\newblock Basic properties of strong mixing conditions. a survey and some open
+  questions.
+\newblock {\em Probability Surveys}, 2:107--144.
+
+\bibitem[Bradley, 2007]{bradley2007introduction}
+Bradley, R.~C. (2007).
+\newblock {\em Introduction to Strong Mixing Conditions}.
+\newblock Kendrick Press.
+
+\bibitem[Chan and Hall, 2009a]{chan2009robust}
+Chan, Y.-B. and Hall, P. (2009a).
+\newblock Robust nearest-neighbor methods for classifying high-dimensional
+  data.
+\newblock {\em The Annals of Statistics}, 37(6A):3186--3203.
+
+\bibitem[Chan and Hall, 2009b]{CH2009}
+Chan, Y.-B. and Hall, P. (2009b).
+\newblock Scale adjustments for classifiers in high-dimensional, low sample
+  size settings.
+\newblock {\em Biometrika}, 96(2):469--478.
+
+\bibitem[Dau et~al., 2018]{UCRArchive2018}
+Dau, H.~A., Keogh, E., Kamgar, K., Yeh, C.-C.~M., Zhu, Y., Gharghabi, S.,
+  Ratanamahatana, C.~A., Yanping, Hu, B., Begum, N., Bagnall, A., Mueen, A.,
+  and Batista, G. (2018).
+\newblock The {UCR} time series classification archive.
+\newblock \url{https://www.cs.ucr.edu/~eamonn/time_series_data_2018/}.
+
+\bibitem[Deegalla and Bostrom, 2006]{deegalla2006reducing}
+Deegalla, S. and Bostrom, H. (2006).
+\newblock Reducing high-dimensional data by principal component analysis vs.
+  random projection for nearest neighbor classification.
+\newblock In {\em 2006 5th International Conference on Machine Learning and
+  Applications (ICMLA'06)}, pages 245--250. IEEE.
+
+\bibitem[Dutta and Ghosh, 2016]{dutta2016some}
+Dutta, S. and Ghosh, A.~K. (2016).
+\newblock On some transformations of high dimension, low sample size data for
+  nearest neighbor classification.
+\newblock {\em Machine Learning}, 102(1):57--83.
+
+\bibitem[Francois et~al., 2007]{francois2007concentration}
+Francois, D., Wertz, V., and Verleysen, M. (2007).
+\newblock The concentration of fractional distances.
+\newblock {\em IEEE Transactions on Knowledge and Data Engineering},
+  19(7):873--886.
+
+\bibitem[Friedman et~al., 2001]{friedman2001elements}
+Friedman, J., Hastie, T., and Tibshirani, R. (2001).
+\newblock {\em The Elements of Statistical Learning}, volume~1.
+\newblock Springer Series in Statistics: New York.
+
+\bibitem[Globerson and Roweis, 2005]{globerson2005metric}
+Globerson, A. and Roweis, S. (2005).
+\newblock Metric learning by collapsing classes.
+\newblock {\em Advances in Neural Information Processing Systems}, 18:451--458.
+
+\bibitem[Hall et~al., 2005]{HMN05}
+Hall, P., Marron, J.~S., and Neeman, A. (2005).
+\newblock Geometric representation of high dimension, low sample size data.
+\newblock {\em Journal of the Royal Statistical Society Series B},
+  67(3):427--444.
+
+\bibitem[Hastie et~al., 2009]{hastie2009elements}
+Hastie, T., Tibshirani, R., and Friedman, J. (2009).
+\newblock {\em The Elements of Statistical Learning: Data mining, Inference,
+  and Prediction}.
+\newblock Springer, New York.
+
+\bibitem[Li and Zhang, 2020]{li2020projective}
+Li, Z. and Zhang, Y. (2020).
+\newblock On a projective ensemble approach to two sample test for equality of
+  distributions.
+\newblock In {\em International Conference on Machine Learning}, pages
+  6020--6027. PMLR.
+
+\bibitem[Roy et~al., 2022]{roy2022generalizations}
+Roy, S., Sarkar, S., Dutta, S., and Ghosh, A.~K. (2022).
+\newblock On generalizations of some distance based classifiers for {HDLSS}
+  data.
+\newblock {\em Journal of Machine Learning Research}, 23(14):1--41.
+
+\bibitem[Thrampoulidis, 2020]{thrampoulidis2020theoretical}
+Thrampoulidis, C. (2020).
+\newblock Theoretical insights into multiclass classification: A
+  high-dimensional asymptotic view.
+\newblock {\em Neural Information Processing Systems (NeuRIPS 2020)}.
+
+\bibitem[Toma{\v{s}}ev et~al., 2014]{tomavsev2014hubness}
+Toma{\v{s}}ev, N., Radovanovi{\'c}, M., Mladeni{\'c}, D., and Ivanovi{\'c}, M.
+  (2014).
+\newblock Hubness-based fuzzy measures for high-dimensional k-nearest neighbor
+  classification.
+\newblock {\em International Journal of Machine Learning and Cybernetics},
+  5(3):445--458.
+
+\bibitem[Vapnik, 1998]{vapnik1998statistical}
+Vapnik, V. (1998).
+\newblock {\em Statistical Learning Theory}.
+\newblock John Wiley \& Sons.
+
+\bibitem[Vershynin, 2018]{vershynin2018high}
+Vershynin, R. (2018).
+\newblock {\em High-dimensional Probability: An Introduction with Applications
+  in Data Science}, volume~47.
+\newblock Cambridge University Press.
+
+\bibitem[Wainwright, 2019]{wainwright2019high}
+Wainwright, M.~J. (2019).
+\newblock {\em High-dimensional Statistics: A Non-asymptotic Viewpoint},
+  volume~48.
+\newblock Cambridge University Press.
+
+\bibitem[Weinberger and Saul, 2009]{weinberger2009distance}
+Weinberger, K.~Q. and Saul, L.~K. (2009).
+\newblock Distance metric learning for large margin nearest neighbor
+  classification.
+\newblock {\em Journal of Machine Learning Research}, 10(2).
+
+\end{thebibliography}
