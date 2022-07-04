@@ -1,0 +1,337 @@
+% Gemini theme
+% https://github.com/anishathalye/gemini
+%
+% We try to keep this Overleaf template in sync with the canonical source on
+% GitHub, but it's recommended that you obtain the template directly from
+% GitHub to ensure that you are using the latest version.
+
+\documentclass[aspectratio=169, 14pt]{beamer}
+
+% ====================
+% Packages
+% ====================
+
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage[scale=1.0]{beamerposter}
+%\usepackage[inline]{enumitem}
+%\usepackage[size=custom,width=120,height=72,scale=1.0]{beamerposter}
+%\usetheme{gemini}
+%\usecolortheme{gemini}
+\usepackage{graphicx}
+%\usepackage{booktabs}
+%\usepackage{tikz}
+%\usepackage{pgfplots}
+\usepackage{multicol}
+%\pgfplotsset{compat=1.14}
+
+% ====================
+% Lengths
+% ====================
+
+% If you have N columns, choose \sepwidth and \colwidth such that
+% (N+1)*\sepwidth + N*\colwidth = \paperwidth
+\newlength{\sepwidth}
+\newlength{\colwidth}
+\setlength{\sepwidth}{0.025\paperwidth}
+\setlength{\colwidth}{0.465\paperwidth}
+
+\newcommand{\separatorcolumn}{\begin{column}{\sepwidth}\end{column}}
+\newcommand{\bbR}{\mathbb{R}}
+\newcommand{\bbX}{\mathbb{X}}
+\newcommand{\bI}{\mathbf{I}}
+\newcommand{\bM}{\mathbf{M}}
+\newcommand{\bX}{\mathbf{X}}
+\newcommand{\bY}{\mathbf{Y}}
+\newcommand{\bZ}{\mathbf{Z}}
+\newcommand{\bA}{\mathbf{A}}
+\newcommand{\bB}{\mathbf{B}}
+\newcommand{\bC}{\mathbf{C}}
+\newcommand{\bD}{\mathbf{D}}
+\newcommand{\bF}{\mathbf{F}}
+\newcommand{\bG}{\mathbf{G}}
+\newcommand{\bP}{\mathbf{P}}
+\newcommand{\bR}{\mathbf{R}}
+\newcommand{\bS}{\mathbf{S}}
+\newcommand{\bU}{\mathbf{U}}
+\newcommand{\bV}{\mathbf{V}}
+\newcommand{\br}{\mathbf{r}}
+\newcommand{\bL}{\mathbf{L}}
+\newcommand{\bW}{\mathbf{W}}
+\newcommand{\bT}{\mathbf{T}}
+\newcommand{\bH}{\mathbf{H}}
+\newcommand{\bx}{\mathbf{x}}
+\newcommand{\bz}{\mathbf{z}}
+\newcommand{\bs}{\mathbf{s}}
+\newcommand{\bu}{\mathbf{u}}
+\newcommand{\ba}{\mathbf{a}}
+\newcommand{\bb}{\mathbf{b}}
+\newcommand{\by}{\mathbf{y}}
+\newcommand{\bc}{\mathbf{c}}
+\newcommand{\bv}{\mathbf{v}}
+\newcommand{\bm}{\mathbf{m}}
+\newcommand{\bw}{\mathbf{w}}
+\newcommand{\bd}{\mathbf{d}}
+\newcommand{\bt}{\mathbf{t}}
+%\newcommand{\be}{\mathbf{\mathcal{E}}}
+\newcommand{\bmu}{\boldsymbol{\mu}}
+\newcommand{\bdelta}{\boldsymbol{\delta}}
+\newcommand{\bepsilon}{\boldsymbol{\epsilon}}
+\newcommand{\balpha}{\boldsymbol{\alpha}}
+\newcommand{\bbeta}{\boldsymbol{\beta}}
+\newcommand{\bnu}{\boldsymbol{\nu}}
+%\newcommand{\btheta}{\boldsymbol{\theta}}
+\newcommand{\bLambda}{\boldsymbol{\psi}}
+\newcommand{\bSigma}{\boldsymbol{\Sigma}}
+\newcommand{\bGamma}{\boldsymbol{\Gamma}}
+\newcommand{\bOmega}{\boldsymbol{\Omega}}
+\newcommand{\bDelta}{\boldsymbol{\Delta}}
+\newcommand{\bgamma}{\boldsymbol{\gamma}}
+\newcommand{\blambda}{\boldsymbol{\lambda}}
+\newcommand{\bxi}{\boldsymbol{\xi}}
+\newcommand{\bomega}{\boldsymbol{\omega}}
+\newcommand{\0}{\mathbf{0}}
+\newcommand{\1}{\mathbf{1}}
+\DeclareRobustCommand{\rchi}{{\mathpalette\irchi\relax}}
+\newcommand{\irchi}[2]{\raisebox{\depth}{$#1\chi$}} % inner command, used by \rchi
+%\newcommand{\rchi}{\mathscr X}
+\newcommand{\argmin}{\operatornamewithlimits{arg\,min}}
+\newcommand{\argmax}{\operatornamewithlimits{arg\,max}}
+%###################################
+
+% ====================
+% Title
+% ====================
+\title[Beamer Poster]{On Some Fast And Robust Classifiers For High Dimension, Low Sample Size Data}
+
+\author{Sarbojit Roy \inst{1} \and Jyotishka Ray Choudhury \inst{2} \and Subhajit Dutta \inst{1}}
+
+\institute[shortinst]{\inst{1} Indian Institute of Technology Kanpur \samelineand \inst{2} Indian Statistical Institute Kolkata}
+
+% ====================
+% Footer (optional)
+% ====================
+\footercontent{
+%  \href{https://www.example.com}{https://www.example.com} \hfill
+  25th International Conference on Artificial Intelligence and Statistics \hfill
+  \href{Full Article:}{Full Article:}}
+% (can be left out to remove footer)
+
+% ====================
+% Logo (optional)
+% ====================
+
+% use this to include logos on the left and/or right side of the header:
+% \logoright{\includegraphics[height=7cm]{logo1.pdf}}
+% \logoleft{\includegraphics[height=7cm]{logo2.pdf}}
+
+% ====================
+% Body
+% ====================
+
+\begin{document}
+%\settasks{label-format={\color{green!70!black}\large\bfseries}, label-align=center, label-offset={10mm}, label-width={10mm}, item-indent={5mm}, item-format={\scshape\small}, column-sep={3mm}, after-item-skip=-1mm, after-skip={3mm}
+%}
+\begin{frame}[t]
+\begin{columns}[t]
+\separatorcolumn
+
+\begin{column}{\colwidth}
+
+\begin{block}{Classification in High Dimension, Low Sample Size Settings}
+Suppose $\bX_i=(X_{i1},\ldots, X_{ip})^\top$ and $\bY_j=(Y_{j1},\ldots, Y_{jp})^\top$ are i.i.d. random vectors following $\bF_1$ and $\bF_2,$ respectively, for $1\le i\le n_1$ and $ 1\le j\le n_2.$ Let $\rchi = \rchi_1\cup \rchi_2$ be the training sample of size $n=n_1+n_2$, where $\rchi_1=\{\bX_{1},\ldots,\bX_{n_1}\}$ and
+$\rchi_2=\{\bY_{1},\ldots,\bY_{n_2}\}$. Given a training sample of finite size, we want to develop a classifier such that the misclassification probability of the classifier goes to zero as $p\to\infty$.
+\end{block}
+\begin{block}{Limitations of the Existing Classifiers}
+ \begin{itemize}
+ \item Consider ${\bf\mu}_1={\rm E}[\bX]$, ${\bf\mu}_2={\rm E}[\bY]$,
+$ \Sigma_1= {\rm Cov}[\bX]$,  $\Sigma_2={\rm Cov}[\bY]$,
+$\nu^2=\lim\limits_{p\to\infty}\frac{1}{p}\|{\bf\mu}_1-{\bf\mu}_2\|^2$, $\sigma^2_j = \lim\limits_{p\to\infty}\frac{1}{p} {\rm trace} (\Sigma_j)$ for $j=1,2$. %Here, $\|\cdot\|$ denotes the Euclidean norm on $\mathbb{R}^p$.
+ \item Existing classifiers yield perfect classification (i.e., $\Delta_d \to 0$ as $d\to\infty$) under the following conditions:
+ \begin{itemize}
+ \item $\nu^2>|\sigma^2_1-\sigma^2_2|,$ e.g., nearest neighbor (NN) classifier, average distance (AVG) classifier, scale adjusted AVG (SAVG),  support vector machines (SVM) \citep{HMN05}.
+ \item $\nu>0,$ or $\sigma_1\neq \sigma_2$, e.g.,  NN based on mean of absolute differences of distances (MADD) \citep{CH2009,PMG2016}.
+ \end{itemize}
+ \item \textcolor{red}{The behavior of the existing classifiers in the HDLSS asymptotic regime is governed by the constants $\nu^2$, $\sigma^2_1$and $\sigma^2_2$.}
+\end{itemize}
+\end{block}
+\begin{alertblock}{Our Contribution}
+We propose classifiers that are
+    \begin{enumerate}
+            \item are robust,
+            \item computationally fast, 
+            \item free from tuning parameters, and
+            \item have strong theoretical properties.
+\end{enumerate}
+\end{alertblock}
+
+\begin{block}{A Robust and Tuning-free Classifier}
+Define
+$$\bar{L}_1(\bz) = \frac{1}{2{n_1\choose 2}}\sum\limits_{i< j}\textcolor{blue}{\bar{h}(\bX_{i},\bX_{j})}-\frac{1}{n_1}\sum\limits_{i=1}^{n_1}\textcolor{blue}{\bar{h}(\bX_{i},\bz)},\hfill \bar{L}_2(\bz) = \frac{1}{2{n_2\choose 2}}\sum\limits_{i< j}\textcolor{blue}{\bar{h}(\bY_{i},\bY_{j})}-\frac{1}{n_2}\sum\limits_{i=1}^{n_2}\textcolor{blue}{\bar{h}(\bY_{i},\bz)}\text{ and }\bar{L}(\bZ)=\bar{L}_2(\bZ)-\bar{L}_2(\bZ),$$ where
+\begin{itemize}
+% \vspace{-0.25cm}
+\item $h(u,v) = \frac{1}{2\pi}\sin^{-1}\left (\frac{1 + uv}{\sqrt{(1+u^2)(1+v^2)}}\right )$ for $u,v\in\mathbb{R}$.
+%{\scriptsize Boundedness of $h$ makes the resulting classifier robust.}
+\item $\bar{h}(\bu,\bv)=\frac{1}{p}\sum_{k=1}^p h(u_k,v_k).$
+\end{itemize}
+Define $\bar{\tau}_{p}={\rm E}[\bar{h}(\bX_1,\bX_2)]+E[\bar{h}(\bY_1,\bY_2)] - 2E[\bar{h}(\bX_1,\bY_1)].$
+\begin{itemize}
+\item \textcolor{blue}{$\bar{\tau}_p=0$ iff $F_{k}=G_{k}$ for all $1\leq k\leq p$} \citep{li2020projective}.
+\item \textcolor{blue}{${\rm E}[\bar{L}(\bZ)\mid \bZ\sim\bF]=\bar{\tau}_p\ge 0$, but ${\rm E}[\bar{L}(\bZ)\mid \bZ\sim\bG]=-\bar{\tau}_p\le 0$}.
+\end{itemize}
+Based on this observation we propose the classifier:
+ $\delta_1(\bz)=\begin{cases}
+                1,& \text{ if }\bar{L}(\bz)>0,\\
+                2,& \text{ otherwise.}
+               \end{cases}$
+ \end{block}
+%\end{column}
+
+%\separatorcolumn
+
+%\begin{column}{\colwidth}
+
+\begin{block}{Limitations of Using $\bar{\tau}_p$}
+\begin{align*}
+ \bar{\tau}_p& = \bar{\tau}_p(1,1) - 2\bar{\tau}_p(1,2) + \bar{\tau}_p(2,2)= \{\bar{\tau}_p(1,1) - \bar{\tau}_p(1,2)\}+\{\bar{\tau}_p(2,2) - \bar{\tau}_p(1,2)\}.
+\end{align*}
+\begin{itemize}
+    \item Since $\bar{\tau}_p\geq 0$, we always have $\bar{\tau}_p(1,2)\leq \{\bar{\tau}_p(1,1) + \bar{\tau}_p(2,2)\}/2$.
+    \item Suppose $\bar{\tau}_p(1,1) < \bar{\tau}_p(1,2)<\bar{\tau}_p(2,2) $. Then, $\bar{\tau}_p$ may become small. 
+    \item We define an improved index of dissimilarity as follows:
+    \begin{align*}%\label{psibardef0}
+ \bar{\psi}_p = \{\bar{\tau}_p(1,1) - \bar{\tau}_p(1,2)\}^2+\{\bar{\tau}_p(2,2) - \bar{\tau}_p(1,2)\}^2%=\frac{1}{2}\big [\bar{\tau}_p^2 +\{\bar{\tau}_p(1,1) - \bar{\tau}_p(2,2)\}^2\big ].
+\end{align*}
+    \end{itemize}
+\begin{itemize}
+    \item $\bar{\psi}_p=0$ iff $F_{k}=G_{k}$ for all $1\leq k\leq p.$
+\end{itemize}
+%$\bar{\tau}_p(1,1) - \bar{\tau}_p(1,2)<0$ and $\bar{\tau}_p(2,2) - \bar{\tau}_p(1,2)>0.$ Adding them up may cancel each other. As a result, $\bar{\tau}_p$ may not fully capture the difference between $\bF_1$ and $\bF_2.$ One way to rectify this problem is to square the two quantities before adding them up. Define
+\end{block}
+\end{column}
+
+\separatorcolumn
+
+\begin{column}{\colwidth}
+ \begin{block}{A Classifier Based on $\bar{\psi}_p$}
+\begin{itemize}
+ \item {\bf Discriminant}:\begin{align*}
+& \theta(\bz) =\frac{1}{2}\big\{{T}_{11}-2{T}_{12}+{T}_{22}\big\}T_1(\bz)+ \frac{1}{2}\big\{{T}_{22}-{T}_{11}\big\}\left\{\frac{1}{n_2}\sum\limits_{i=1}^{n_2}\bar{h}(\bY_{i},\bz)+\frac{1}{n_1}\sum\limits_{i=1}^{n_1}\bar{h}(\bX_{i},\bz)+2{T}_{12}\right \},\\
+&\text{where}\ T_{11} = \frac{1}{{n_1\choose 2}}\sum\limits_{i< j}\bar{h}(\bX_{i},\bX_{j}),\ T_{22} = \frac{1}{{n_2\choose 2}}\sum\limits_{i< j}\bar{h}(\bY_{i},\bY_{j})\text{ and } T_{12} = \frac{1}{{n_1n_2}}\mathop{\sum\sum}\limits_{i, j}\bar{h}(\bX_{i},\bY_{j}).
+\end{align*}
+
+\item $\bar{\theta}(\bZ)$ converges in probability to $\bar{\psi}_p$ as $p\to\infty$ if $\bZ\sim\bF_1,$ and to $-\bar{\psi}_p$ if $\bZ\sim\bF_2$.
+\item {\bf Classifier:} $\delta_2(\bz)=\begin{cases}
+                1,& \text{ if }\bar{\theta}(\bz)>0,\\
+                2,& \text{ otherwise.}
+               \end{cases}$
+\end{itemize}
+  \end{block}
+\begin{block}{Asymptotic Behavior of the Discriminants in HDLSS Settings}
+Suppose $\bU$ and $\bV$ are two independent vectors such that $\bU=(U_1,\ldots, U_p)^\top\sim \bF_j$ and $\bV=(V_1,\ldots, V_p)^\top\sim \bF_{j^\prime}$ for $j,j^\prime\in\{1,2\}$.  We now assume the following:
+\begin{itemize}
+%  \item Let $\bU=(U_1,\ldots, U_d)^\top\sim {\bf F}_j,\bV=(V_1,\ldots,V_d)^\top\sim{\bf F}_{j^\prime},$ $j,j^\prime\in\{1,2\}$ where $\bU$ and $\bV$ are independent.
+ \item \textcolor{blue}{Weak dependence among the component variables:} (A1) $\mathop{\sum\sum}\limits_{1\leq k<k^\prime\leq p} {\rm Corr}\big(h(U_k,V_k),h(U_{k^\prime},V_{k^\prime})\big)=o(p^2).$
+\item Assumption A1 is trivially satisfied if the component variables of the underlying distributions are independently distributed and it continues to hold when the components have weak dependence among them. For example, A1 is satisfied when the sequence $\{h(U_k,V_k),k\geq 1\}$ has $\rho$-mixing property. %Note that if the sequences $\{U_k,k\geq 1\}$ and $\{V_k,k\geq 1\}$ have $\rho$-mixing property, then $\{h(U_k,V_k),k\geq 1\}$ has $\rho$-mixing property for every measurable function $h$.
+
+\item If assumption (A1) is satisfied, then we have the following:
+\end{itemize}
+% \vspace{0.25cm}
+\begin{table}[]
+    \centering
+\renewcommand{\arraystretch}{1.2}
+ \begin{tabular}{|c|c|}
+\hline
+ $\bZ\sim \bF_1$ &$\bZ\sim \bF_2$\\
+ \hline
+ $|\bar{L}(\bZ)-\bar{\tau}_{p}|\stackrel{\rm P}{\to}0$ and $|\bar{\theta}(\bZ)-\bar{\psi}_{p}|\stackrel{\rm P}{\to}0$ as $p\to\infty$ &
+ $|\bar{L}(\bZ)+\bar{\tau}_{p}|\stackrel{\rm P}{\to}0$ and $|\bar{\theta}(\bZ)+\bar{\psi}_{p}|\stackrel{\rm P}{\to}0$ as $p\to\infty$.\\
+ \hline
+\end{tabular}    
+\end{table}
+
+\begin{itemize}
+\item \textcolor{blue}{Asymptotic separability of $\bF_1$ and $\bF_2$:}
+ (A2) $\liminf \limits_{p\to\infty}\ \bar{\tau}_p>0.$
+\end{itemize}
+\end{block}
+\begin{alertblock}{Main Theorem: Perfect Classification}
+ If {\rm A1} and {\rm A2} are satisfied, then for any $\pi_1>0$,
+$\Delta_1\to 0$ and $\Delta_2\to 0$ as $p\to\infty $.
+\end{alertblock}
+\begin{block}{Comparison Between $\delta_1$ and $\delta_2$}
+It is clear from Theorem \ref{d1thm} that both the classifiers yield {\it perfect classification} under the same set of assumptions. The next result provides a set of sufficient conditions under which one classifier performs better than the other. First, let us consider the following assumption:
+\begin{enumerate}
+ \item[A3.] There exists a $p_0\in\mathbb{N}$ such that $\bar{\tau}_p(1,2)>\min\{\bar{\tau}_p(1,1),\bar{\tau}_p(2,2)\}$ for all $p\ge p_0.$
+\end{enumerate}
+If assumption A3 is satisfied, then either $\bar{\tau}_p(1,1)-\bar{\tau}_p(1,2)$ or $\bar{\tau}_p(2,2)-\bar{\tau}_p(1,2)$ is positive, while the other one is negative. The next result suggests that under such circumstances, $\delta_2$ leads to an improve performance over $\delta_1.$
+\end{block}
+\begin{block}{}
+If assumptions ${\rm (A1)}-{\rm (A3)}$ are satisfied, then there exists an integer $p^\prime_0$ such that
+$$\Delta_{2} \leq \Delta_{1} \text{ for all } p\geq p^\prime_0.$$
+If the inequality stated in assumption A3 is inverted, then the ordering of $\Delta_1$ and $\Delta_2$ in Theorem \ref{cmpr_d1_d2} is reversed.
+\end{block}
+\begin{block}
+\includegraphics[scale = 0.95]{simu_plot_wide-1.png}
+\end{block} 
+\begin{examples}%{A highlighted block containing some math}
+\begin{multicols}{2}
+\begin{enumerate}
+    \item $X_{1k}\stackrel{i.i.d.}{\sim} N(1,1)$ and $Y_{1k}\stackrel{i.i.d.}{\sim} N(1,2),$
+    \item $X_{1k}\stackrel{i.i.d.}{\sim} N(0,3)$ and $Y_{1k}\stackrel{i.i.d.}{\sim} t_3,$
+    \item $X_{1k}\stackrel{i.i.d.}{\sim} C(0,1)$ and $Y_{1k}\stackrel{i.i.d.}{\sim} C(1,1)$,
+    \item $X_{1k}\stackrel{i.i.d.}{\sim} C(0,1)$ and $Y_{1k}\stackrel{i.i.d.}{\sim} C(0,2)$,
+    \item $X_{1k}$ $\stackrel{i.i.d.}{\sim}$ ${\rm Par}(1,1)$ and $Y_{1k}\stackrel{i.i.d.}{\sim}{\rm Par}(1.25,1)$,
+\end{enumerate}
+\columnbreak
+\begin{enumerate}
+    \item $X_{1k}\stackrel{i.i.d.}{\sim} N(1,1)$ and $Y_{1k}\stackrel{i.i.d.}{\sim} N(1,2),$
+    \item $X_{1k}\stackrel{i.i.d.}{\sim} N(0,3)$ and $Y_{1k}\stackrel{i.i.d.}{\sim} t_3,$
+    \item $X_{1k}\stackrel{i.i.d.}{\sim} C(0,1)$ and $Y_{1k}\stackrel{i.i.d.}{\sim} C(1,1)$,
+    \item $X_{1k}\stackrel{i.i.d.}{\sim} C(0,1)$ and $Y_{1k}\stackrel{i.i.d.}{\sim} C(0,2)$,
+    \item $X_{1k}$ $\stackrel{i.i.d.}{\sim}$ ${\rm Par}(1,1)$ and $Y_{1k}\stackrel{i.i.d.}{\sim}{\rm Par}(1.25,1)$,
+\end{enumerate}
+\end{multicols}
+
+for $1\le k\le p$. Here, $C(\mu,\sigma)$ denotes the Cauchy distribution with location $\mu\in\mathbb{R}$ and scale $\sigma>0$, while ${\rm Par}(\theta,s)$ denotes the Pareto distribution with $\theta>0$ and scale $s>0$.
+  \end{examples}
+\end{column}
+
+\separatorcolumn
+\end{columns}
+\end{frame}
+
+\end{document}
+
+
+\begin{block} 
+  \end{block}
+
+  \begin{block}{References}
+
+    \nocite{*}
+    \footnotesize{\bibliographystyle{plain}\bibliography{poster}}
+
+  \end{block}
+  
+  \begin{block}{Convergence of the Discriminants}
+ If {\rm A1} is satisfied, then for a test observation $\bZ$, we have
+\begin{enumerate}[(a)]
+\item  $\begin{aligned}[t]\text{If }\bZ\sim\bF_1,\text{ then }
+|\bar{L}(\bZ) - \bar{\tau}_p|\stackrel{\rm P}{\to}0\text{ and }|\bar{\theta}(\bZ)-\bar{\psi}_p|\stackrel{\rm P}{\to}0\text{ as } p\to\infty .
+ \end{aligned}$
+\item  $\begin{aligned}[t]\text{If }\bZ\sim\bF_2,\text{ then }
+ |\bar{L}(\bZ) + \bar{\tau}_p|\stackrel{\rm P}{\to}0\text{ and }
+    |\bar{\theta}(\bZ)+\bar{\psi}_p|\stackrel{\rm P}{\to}0\text{ as } p\to\infty.
+ \end{aligned}$
+\end{enumerate}
+%This lemma shows that assumption A1 is sufficient for convergence of the discriminants $\bar{L}(\bZ)$ and $\bar{\theta}(\bZ)$.
+\end{block}
+ 
+ \begin{block}{Asymptotic Properties of $\delta_1$ and $\delta_2$ in HDLSS Settings}
+Lemma \ref{L2} suggests that $\delta_1$ and $\delta_2$ should yield good performance if $\bar{\tau}_p$ and $\bar{\psi}_p$ do not vanish with increasing dimension. Hence, it is reasonable to assume the following:
+\begin{enumerate}
+ \item[A2.] $\liminf\limits_{p} \bar{\tau}_p>0$.
+\end{enumerate}
+A2 implies that the separation between $\bF_1$ and $\bF_2$ is asymptotically non-negligible. Observe that this assumption is satisfied if the component variables of $\bU\sim\bF_j$ are identically distributed for $j=1,2$. A2 also implies $\liminf_p\bar{\psi}_p>0$.
+\end{block}
