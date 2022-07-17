@@ -13,13 +13,14 @@ no.cores = round(detectCores() * 0.75)
 cl = makeCluster(spec = no.cores, type = 'PSOCK')
 registerDoParallel(cl)
 
-iterations <- 100
+iterations <- 50
 
 n <- 20
 m <- 20
 ns <- 100
 ms <- 100
 
+# d.seq <- c(5,10,25,50)
 d.seq <- c(5,10,25,50,100,250,500,1000)
 
 res.list <- list()
@@ -264,6 +265,11 @@ for (k in 1:length(d.seq)) {
    res.list[[k]] <- rbind(result, rep(NA, 18), apply(result, 2, mean), apply(result, 2, sciplot::se))
 }
 
+# res.list.C01.vs.C02 <- list("d=5" = res.list[[1]],
+#                             "d=10" = res.list[[2]],
+#                             "d=25" = res.list[[3]],
+#                             "d=50" = res.list[[4]])
+
 res.list.C01.vs.C02 <- list("d=5" = res.list[[1]],
                             "d=10" = res.list[[2]],
                             "d=25" = res.list[[3]],
@@ -273,11 +279,11 @@ res.list.C01.vs.C02 <- list("d=5" = res.list[[1]],
                             "d=500" = res.list[[7]],
                             "d=1000" = res.list[[8]])
 
-# writexl::write_xlsx(x = res.list.C01.vs.C02,
-#                     path = "C:\\Users\\JYOTISHKA\\Desktop\\Pop-C01-vs-C02.xlsx")
-
 writexl::write_xlsx(x = res.list.C01.vs.C02,
-                    path = "E:\\Jyotishka\\Code\\Pop-C01-vs-C02-with-nn.xlsx")
+                    path = "C:\\Users\\JYOTISHKA\\Desktop\\Pop-C01-vs-C02.xlsx")
+
+# writexl::write_xlsx(x = res.list.C01.vs.C02,
+#                     path = "E:\\Jyotishka\\Code\\Pop-C01-vs-C02-with-nn.xlsx")
 
 stopCluster(cl)
 gc()
